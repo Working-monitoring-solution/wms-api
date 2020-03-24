@@ -3,23 +3,35 @@ package wms.api.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import wms.api.util.InputValidator;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.KeySpec;
 import java.util.Optional;
 
-public abstract class BaseServiceImpl<R extends PagingAndSortingRepository<T, ID>, T, ID> extends InputValidator{
+public abstract class BaseServiceImpl<R extends JpaRepository<T, ID>, T, ID> extends InputValidator {
+
+    @Value("${spring.jwt.secretkey}")
+    protected String secretkey;
+
+    @Autowired
+    protected R repo;
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
-    @Autowired
-     protected R                     repo;
-
-    public BaseServiceImpl() {
+    public BaseServiceImpl() throws Exception {
     }
 
     public Optional<T> save(T t) throws IllegalArgumentException {

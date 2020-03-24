@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import wms.api.common.WMSResponse;
 import wms.api.constant.WMSConstant;
 import wms.api.exception.WMSException;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+@RequestMapping(path = "/api")
 public abstract class AbstractController<S, T> extends BaseController{
 
     @Autowired
@@ -38,21 +41,21 @@ public abstract class AbstractController<S, T> extends BaseController{
     }
 
     protected <V> ResponseEntity<WMSResponse<V>> toResult(V t) {
-        WMSResponse<V> vpResponse = new WMSResponse<V>();
-        vpResponse.setCode(WMSCode.SUCCESS);
+        WMSResponse<V> wmsResponse = new WMSResponse<V>();
+        wmsResponse.setCode(WMSCode.SUCCESS);
         String lang = StringUtils.isEmpty(request.getParameter("lang")) ? "vi" : request.getParameter("lang");
-        vpResponse.setMessage(messageSource.getMessage("err.00", null, null, new Locale(lang)));
-        vpResponse.setData(t);
-        return response(vpResponse);
+        wmsResponse.setMessage(messageSource.getMessage("err.00", null, null, new Locale(lang)));
+        wmsResponse.setData(t);
+        return response(wmsResponse);
     }
 
     protected <V> ResponseEntity<WMSResponse<List<V>>> toResult(List<V> v) {
-        WMSResponse<List<V>> vpResponse = new WMSResponse<List<V>>();
-        vpResponse.setCode(WMSCode.SUCCESS);
+        WMSResponse<List<V>> wmsResponse = new WMSResponse<List<V>>();
+        wmsResponse.setCode(WMSCode.SUCCESS);
         String lang = StringUtils.isEmpty(request.getParameter("lang")) ? "vi" : request.getParameter("lang");
-        vpResponse.setMessage(messageSource.getMessage("err.00", null, null, new Locale(lang)));
-        vpResponse.setData(v);
-        return response(vpResponse);
+        wmsResponse.setMessage(messageSource.getMessage("err.00", null, null, new Locale(lang)));
+        wmsResponse.setData(v);
+        return response(wmsResponse);
     }
 
 
