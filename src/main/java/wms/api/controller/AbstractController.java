@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-@RequestMapping(path = "/api")
 public abstract class AbstractController<S, T> extends BaseController{
 
     @Autowired

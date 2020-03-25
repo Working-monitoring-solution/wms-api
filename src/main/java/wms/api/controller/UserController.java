@@ -11,7 +11,7 @@ import wms.api.service.internal.UserService;
 import wms.api.transform.UserTransform;
 
 @RestController
-@RequestMapping(path = "/user")
+@RequestMapping(path = "/api/user")
 public class UserController extends AbstractController<UserService, UserTransform> {
 
     @RequestMapping(path = "/create-user", method = RequestMethod.POST)

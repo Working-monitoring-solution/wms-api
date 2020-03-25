@@ -30,6 +30,12 @@ public class WMSException extends RuntimeException {
         this.data = data;
     }
 
+    public static class LoginFailException extends WMSException {
+        public LoginFailException() {
+            super(WMSCode.LOGIN_FAIL_CODE, WMSCode.LOGIN_FAIL_MESSAGE);
+        }
+    }
+
     public static class NoDataInputException extends WMSException {
 
         private static final long serialVersionUID = -7257749122280775815L;

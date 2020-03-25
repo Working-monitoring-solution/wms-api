@@ -5,6 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import wms.api.exception.WMSException;
 import wms.api.util.Constant;
 import wms.api.common.request.CreateUserRequest;
 import wms.api.common.request.UserLoginRequest;
@@ -22,15 +23,15 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
     @Override
     public String login(UserLoginRequest request) {
         User user = repo.findByEmail(request.getEmail());
-        if (authenticate(user.getPassword(), request.getPassword())) {
-            if (!ObjectUtils.isEmpty(user.getToken())) {
-                return user.getToken();
-            }
-            String token = generateToken(user);
-            repo.save(user);
-            return token;
+        if (ObjectUtils.isEmpty(user) || !authenticate(user.getPassword(), request.getPassword())) {
+            throw new WMSException.LoginFailException();
         }
-        return null;
+        if (!ObjectUtils.isEmpty(user.getToken())) {
+            return user.getToken();
+        }
+        String token = generateToken(user);
+        repo.save(user);
+        return token;
     }
 
     @Override
