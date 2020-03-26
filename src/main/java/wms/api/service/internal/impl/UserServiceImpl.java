@@ -23,8 +23,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
     @Override
     public String login(UserLoginRequest request) {
         User user = repo.findByEmail(request.getEmail());
-        if (ObjectUtils.isEmpty(user) || !authenticate(user.getPassword(), request.getPassword())) {
-            throw new WMSException.LoginFailException();
+        if (ObjectUtils.isEmpty(user)) {
+            throw new WMSException.NotFoundEntityException();
+        }
+
+        if (!authenticate(user.getPassword(), request.getPassword())) {
+            throw new W
         }
         if (!ObjectUtils.isEmpty(user.getToken())) {
             return user.getToken();
@@ -50,7 +54,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
     private String generateToken(User user) {
         String token = Jwts.builder()
                 .setSubject(user.getEmail())
-                .signWith(SignatureAlgorithm.ES256, secretkey)
+                .signWith(SignatureAlgorithm.HS256, secretkey)
                 .compact();
         user.setToken(token);
         return token;

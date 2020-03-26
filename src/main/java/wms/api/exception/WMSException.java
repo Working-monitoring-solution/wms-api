@@ -30,9 +30,10 @@ public class WMSException extends RuntimeException {
         this.data = data;
     }
 
-    public static class LoginFailException extends WMSException {
-        public LoginFailException() {
-            super(WMSCode.LOGIN_FAIL_CODE, WMSCode.LOGIN_FAIL_MESSAGE);
+    public static class AuthenticationFailException extends WMSException {
+
+        public AuthenticationFailException(String code, String message) {
+            super(code, message);
         }
     }
 
