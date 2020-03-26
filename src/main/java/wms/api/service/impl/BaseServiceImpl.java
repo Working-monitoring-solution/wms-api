@@ -1,5 +1,6 @@
 package wms.api.service.impl;
 
+import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import wms.api.util.InputValidator;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 public abstract class BaseServiceImpl<R extends JpaRepository<T, ID>, T, ID> extends InputValidator {
@@ -21,9 +23,6 @@ public abstract class BaseServiceImpl<R extends JpaRepository<T, ID>, T, ID> ext
     protected R repo;
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    public BaseServiceImpl() throws Exception {
-    }
 
     public Optional<T> save(T t) throws IllegalArgumentException {
         logger.info("\n\n ----> save record: {} \n\n", t.toString());
@@ -81,5 +80,11 @@ public abstract class BaseServiceImpl<R extends JpaRepository<T, ID>, T, ID> ext
         return repo.findAll(pageable);
     }
 
+    protected String getTokenFromHeader(HttpServletRequest request) {
+        return request.getHeader("token");
+    }
 
+    protected String getEmailFromToken(String token) {
+        return Jwts.parser().setSigningKey(secretkey).parseClaimsJws(token).getBody().getSubject();
+    }
 }

@@ -30,16 +30,38 @@ public class WMSException extends RuntimeException {
         this.data = data;
     }
 
-    public static class AuthenticationFailException extends WMSException {
+    public static class AuthenticationErrorException extends WMSException {
 
-        public AuthenticationFailException(String code, String message) {
-            super(code, message);
+        private static final long serialVersionUID = -7257749122280775814L;
+
+        public AuthenticationErrorException() {
+            super(WMSCode.AUTHENTICATION_ERROR_CODE, WMSCode.AUTHENTICATION_ERROR_MESSAGE);
         }
+    }
+
+    public static class UserNotActiveException extends WMSException {
+
+        private static final long serialVersionUID = -7257749122280775813L;
+
+        public UserNotActiveException() {
+            super(WMSCode.USER_NOT_ACTIVE_CODE, WMSCode.USER_NOT_ACTIVE_MESSAGE);
+        }
+
+    }
+
+    public static class EmailExistException extends WMSException {
+
+        private static final long serialVersionUID = -7257749122280775812L;
+
+        public EmailExistException() {
+            super(WMSCode.EMAIL_EXIST_CODE, WMSCode.EMAIL_EXIST_MESSAGE);
+        }
+
     }
 
     public static class NoDataInputException extends WMSException {
 
-        private static final long serialVersionUID = -7257749122280775815L;
+        private static final long serialVersionUID = -7257749122280775812L;
 
         public NoDataInputException() {
             super(WMSCode.NO_DATA_INPUT_CODE, WMSCode.NO_DATA_INPUT_MESSAGE);

@@ -14,11 +14,10 @@ import wms.api.dao.repo.UserRepository;
 import wms.api.service.impl.BaseServiceImpl;
 import wms.api.service.internal.UserService;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Service
 public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long> implements UserService {
-
-    public UserServiceImpl() throws Exception {
-    }
 
     @Override
     public String login(UserLoginRequest request) {
@@ -26,12 +25,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
         if (ObjectUtils.isEmpty(user)) {
             throw new WMSException.NotFoundEntityException();
         }
-
         if (!authenticate(user.getPassword(), request.getPassword())) {
-            throw new W
+            throw new WMSException.AuthenticationErrorException();
         }
-        if (!ObjectUtils.isEmpty(user.getToken())) {
-            return user.getToken();
+        if (!user.isActive()) {
+            throw new WMSException.UserNotActiveException();
         }
         String token = generateToken(user);
         repo.save(user);
@@ -39,12 +37,20 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
     }
 
     @Override
-    public User createUser(CreateUserRequest request) {
+    public User createUser(CreateUserRequest createUserRequest, HttpServletRequest request) {
+        String token = getTokenFromHeader(request);
+        if (ObjectUtils.isEmpty(token) || )
+
+        if (repo.existsByEmail(createUserRequest.getEmail())) {
+            throw new WMSException.EmailExistException();
+        }
+
         User user = User.builder()
-                .email(request.getEmail())
-                .name(request.getName())
-                .password(hashPassword(request.getPassword()))
-                .avatar(request.getAvatar())
+                .email(createUserRequest.getEmail())
+                .name(createUserRequest.getName())
+                .password(hashPassword(createUserRequest.getPassword()))
+                .avatar(createUserRequest.getAvatar())
+                .active(true)
                 .build();
         generateToken(user);
         repo.save(user);

@@ -5,9 +5,11 @@ import wms.api.common.request.UserLoginRequest;
 import wms.api.dao.entity.User;
 import wms.api.service.BaseService;
 
+import javax.servlet.http.HttpServletRequest;
+
 public interface UserService extends BaseService<User, Long> {
 
     String login(UserLoginRequest request);
 
-    User createUser(CreateUserRequest request);
+    User createUser(CreateUserRequest createUserRequest, HttpServletRequest request);
 }

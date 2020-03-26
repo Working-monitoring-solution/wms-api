@@ -10,13 +10,15 @@ import wms.api.common.request.UserLoginRequest;
 import wms.api.service.internal.UserService;
 import wms.api.transform.UserTransform;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping(path = "/api/user")
 public class UserController extends AbstractController<UserService, UserTransform> {
 
     @RequestMapping(path = "/create-user", method = RequestMethod.POST)
-    public ResponseEntity createUser(@RequestBody CreateUserRequest createUserRequest) {
-        return toResult(service.createUser(createUserRequest));
+    public ResponseEntity createUser(@RequestBody CreateUserRequest createUserRequest, HttpServletRequest request) {
+        return toResult(service.createUser(createUserRequest, request));
     }
 
     @RequestMapping(path = "/login", method = RequestMethod.POST)

@@ -39,7 +39,7 @@ public class User implements Serializable {
     private long expiredDate;
 
     @Column(name = "status")
-    private boolean status;
+    private boolean active;
 
     @Column(name = "avatar")
     private String avatar;
