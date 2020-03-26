@@ -5,6 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import wms.api.exception.WMSException;
 import wms.api.util.Constant;
 import wms.api.common.request.CreateUserRequest;
 import wms.api.common.request.UserLoginRequest;
@@ -22,15 +23,19 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
     @Override
     public String login(UserLoginRequest request) {
         User user = repo.findByEmail(request.getEmail());
-        if (authenticate(user.getPassword(), request.getPassword())) {
-            if (!ObjectUtils.isEmpty(user.getToken())) {
-                return user.getToken();
-            }
-            String token = generateToken(user);
-            repo.save(user);
-            return token;
+        if (ObjectUtils.isEmpty(user)) {
+            throw new WMSException.NotFoundEntityException();
         }
-        return null;
+
+        if (!authenticate(user.getPassword(), request.getPassword())) {
+            throw new W
+        }
+        if (!ObjectUtils.isEmpty(user.getToken())) {
+            return user.getToken();
+        }
+        String token = generateToken(user);
+        repo.save(user);
+        return token;
     }
 
     @Override
@@ -49,7 +54,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
     private String generateToken(User user) {
         String token = Jwts.builder()
                 .setSubject(user.getEmail())
-                .signWith(SignatureAlgorithm.ES256, secretkey)
+                .signWith(SignatureAlgorithm.HS256, secretkey)
                 .compact();
         user.setToken(token);
         return token;

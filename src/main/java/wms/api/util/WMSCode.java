@@ -21,7 +21,7 @@ public class WMSCode {
     public static final String LOCKED_ENTITY_MESSAGE          = "Locked Entity";
 
     public static final String NO_DATA_INPUT_CODE             = "06";
-    public static final String NO_DATA_INPUT_MESSAGE     = "No Data Input";
+    public static final String NO_DATA_INPUT_MESSAGE          = "No Data Input";
 
     public static final String EXPIRED_ENTITY_CODE            = "07";
     public static final String EXPIRED_ENTITY_MESSAGE         = "Expired Data";

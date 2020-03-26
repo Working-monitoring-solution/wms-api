@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import wms.api.common.WMSResponse;
-import wms.api.constant.WMSConstant;
 import wms.api.util.WMSCode;
 
 import java.util.List;
