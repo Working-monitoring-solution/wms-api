@@ -11,13 +11,13 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.client.RestTemplate;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+//import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.nio.charset.Charset;
 
 @SpringBootApplication(scanBasePackageClasses = ApiApplication.class)
 @ComponentScan("wms.api.*")
-@EnableSwagger2
+//@EnableSwagger2
 public class ApiApplication extends SpringBootServletInitializer {
 
     @Override
