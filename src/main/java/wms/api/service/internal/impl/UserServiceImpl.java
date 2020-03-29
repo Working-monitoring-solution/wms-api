@@ -3,8 +3,10 @@ package wms.api.service.internal.impl;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import wms.api.common.request.AdminLoginRequest;
 import wms.api.exception.WMSException;
 import wms.api.util.Constant;
 import wms.api.common.request.CreateUserRequest;
@@ -18,6 +20,13 @@ import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long> implements UserService {
+
+
+    @Value("${spring.jwt.admin.username}")
+    String adminUsername;
+
+    @Value("${spring.jwt.admin.password}")
+    String adminPassword;
 
     @Override
     public String login(UserLoginRequest request) {
@@ -37,10 +46,15 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
     }
 
     @Override
+    public String loginAdmin(AdminLoginRequest request) {
+        adminAuthentication(request);
+        return adminGenerateToken();
+    }
+
+    @Override
     public User createUser(CreateUserRequest createUserRequest, HttpServletRequest request) {
         String token = getTokenFromHeader(request);
-        if (ObjectUtils.isEmpty(token) || )
-
+        tokenService.validateAdminToken(token);
         if (repo.existsByEmail(createUserRequest.getEmail())) {
             throw new WMSException.EmailExistException();
         }
@@ -57,12 +71,37 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
         return user;
     }
 
+    @Override
+    public User changeActiveStatus(String id, HttpServletRequest request) {
+        validateLongValue(id);
+        String token = getTokenFromHeader(request);
+        tokenService.validateAdminToken(token);
+        User user = repo.findById(Long.valueOf(id)).get();
+        user.setActive(!user.isActive());
+        repo.save(user);
+        return user;
+    }
+
+    private void adminAuthentication(AdminLoginRequest request) {
+        if (!request.getUsername().equals(adminUsername) || !request.getPassword().equals(adminPassword)) {
+            throw new WMSException.AuthenticationErrorException();
+        }
+    }
+
     private String generateToken(User user) {
         String token = Jwts.builder()
-                .setSubject(user.getEmail())
+                .setSubject(user.getId().toString())
                 .signWith(SignatureAlgorithm.HS256, secretkey)
                 .compact();
         user.setToken(token);
+        return token;
+    }
+
+    private String adminGenerateToken() {
+        String token = Jwts.builder()
+                .setSubject(adminUsername)
+                .signWith(SignatureAlgorithm.HS256, secretkey)
+                .compact();
         return token;
     }
 

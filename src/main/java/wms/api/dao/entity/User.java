@@ -35,9 +35,6 @@ public class User implements Serializable {
     @Column(name = "token")
     private String token;
 
-    @Column(name = "exprired_date")
-    private long expiredDate;
-
     @Column(name = "status")
     private boolean active;
 

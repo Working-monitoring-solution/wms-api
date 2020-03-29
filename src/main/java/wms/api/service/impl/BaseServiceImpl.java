@@ -1,6 +1,5 @@
 package wms.api.service.impl;
 
-import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import wms.api.service.internal.TokenService;
 import wms.api.util.InputValidator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +18,9 @@ public abstract class BaseServiceImpl<R extends JpaRepository<T, ID>, T, ID> ext
 
     @Value("${spring.jwt.secretkey}")
     protected String secretkey;
+
+    @Autowired
+    protected TokenService tokenService;
 
     @Autowired
     protected R repo;
@@ -82,9 +85,5 @@ public abstract class BaseServiceImpl<R extends JpaRepository<T, ID>, T, ID> ext
 
     protected String getTokenFromHeader(HttpServletRequest request) {
         return request.getHeader("token");
-    }
-
-    protected String getEmailFromToken(String token) {
-        return Jwts.parser().setSigningKey(secretkey).parseClaimsJws(token).getBody().getSubject();
     }
 }
