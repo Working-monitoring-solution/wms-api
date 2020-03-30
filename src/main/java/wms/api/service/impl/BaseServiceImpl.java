@@ -84,6 +84,6 @@ public abstract class BaseServiceImpl<R extends JpaRepository<T, ID>, T, ID> ext
     }
 
     protected String getTokenFromHeader(HttpServletRequest request) {
-        return request.getHeader("token");
+        return request.getHeader("wms_token");
     }
 }

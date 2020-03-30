@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import wms.api.common.request.AdminLoginRequest;
+import wms.api.common.request.ChangeInformationRequest;
 import wms.api.exception.WMSException;
 import wms.api.util.Constant;
 import wms.api.common.request.CreateUserRequest;
@@ -17,10 +18,10 @@ import wms.api.service.impl.BaseServiceImpl;
 import wms.api.service.internal.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Service
 public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long> implements UserService {
-
 
     @Value("${spring.jwt.admin.username}")
     String adminUsername;
@@ -66,8 +67,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
                 .avatar(createUserRequest.getAvatar())
                 .active(true)
                 .build();
+        user = repo.save(user);
         generateToken(user);
-        repo.save(user);
         return user;
     }
 
@@ -79,6 +80,25 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
         User user = repo.findById(Long.valueOf(id)).get();
         user.setActive(!user.isActive());
         repo.save(user);
+        return user;
+    }
+
+    @Override
+    public List<User> getAllUsers(HttpServletRequest request) {
+        String token = getTokenFromHeader(request);
+        tokenService.validateAdminToken(token);
+        return repo.findAll();
+    }
+
+    @Override
+    public User changeUserInformation(ChangeInformationRequest changeInformationRequest, HttpServletRequest request) {
+        String token = getTokenFromHeader(request);
+        tokenService.validateUserToken(token);
+        Long id = tokenService.getIdFromToken(token);
+        User user = repo.findById(id).orElse(null);
+        user.setAvatar(changeInformationRequest.getAvatar());
+        user.setPassword(hashPassword(changeInformationRequest.getPassword()));
+        user = repo.save(user);
         return user;
     }
 
