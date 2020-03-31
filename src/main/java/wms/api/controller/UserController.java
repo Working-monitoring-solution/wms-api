@@ -12,36 +12,36 @@ import wms.api.transform.UserTransform;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping(path = "/api")
+@RequestMapping("/api")
 public class UserController extends AbstractController<UserService, UserTransform> {
 
-    @RequestMapping(path = "/admin/create-user", method = RequestMethod.POST)
+    @PostMapping("/admin/create-user")
     public ResponseEntity createUser(@RequestBody CreateUserRequest createUserRequest, HttpServletRequest request) {
         return toResult(service.createUser(createUserRequest, request));
     }
 
-    @RequestMapping(path = "/user/login", method = RequestMethod.POST)
-    public ResponseEntity login(@RequestBody UserLoginRequest loginRequest) {
+    @PostMapping("/user/login")
+    public ResponseEntity<?> login(@RequestBody UserLoginRequest loginRequest) {
         return toResult(service.login(loginRequest));
     }
 
-    @RequestMapping(path = "/user/change-information", method = RequestMethod.POST)
+    @PostMapping("/user/change-information")
     public ResponseEntity changeUserInformation(@RequestBody ChangeInformationRequest changeInformationRequest, HttpServletRequest request) {
         return toResult(service.changeUserInformation(changeInformationRequest, request));
     }
 
     @CrossOrigin(origins = "http://localhost:9528")
-    @RequestMapping(path = "/admin/login", method = RequestMethod.POST)
+    @PostMapping("/admin/login")
     public ResponseEntity loginAdmin(@RequestBody AdminLoginRequest loginRequest) {
         return toResult(service.loginAdmin(loginRequest));
     }
-    
-    @RequestMapping(path = "/admin/change-active-status", method = RequestMethod.POST)
+
+    @PostMapping("/admin/change-active-status")
     public ResponseEntity changeActiveStatus(@RequestParam String id, HttpServletRequest request) {
         return toResult(service.changeActiveStatus(id, request));
     }
 
-    @RequestMapping(path = "/admin/get-all-users", method = RequestMethod.POST)
+    @PostMapping("/admin/get-all-users")
     public ResponseEntity getAllUsers(HttpServletRequest request) {
         return toResult(service.getAllUsers(request));
     }
