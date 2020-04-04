@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/api")
 public class UserController extends AbstractController<UserService, UserTransform> {
 
+    @CrossOrigin(origins = "http://localhost:9528")
     @PostMapping("/admin/create-user")
     public ResponseEntity createUser(@RequestBody CreateUserRequest createUserRequest, HttpServletRequest request) {
         return toResult(service.createUser(createUserRequest, request));
@@ -36,13 +37,44 @@ public class UserController extends AbstractController<UserService, UserTransfor
         return toResult(service.loginAdmin(loginRequest));
     }
 
+    @CrossOrigin(origins = "http://localhost:9528")
     @PostMapping("/admin/change-active-status")
     public ResponseEntity changeActiveStatus(@RequestParam String id, HttpServletRequest request) {
         return toResult(service.changeActiveStatus(id, request));
     }
 
-    @PostMapping("/admin/get-all-users")
-    public ResponseEntity getAllUsers(HttpServletRequest request) {
-        return toResult(service.getAllUsers(request));
+    @CrossOrigin(origins = "http://localhost:9528")
+    @PostMapping("/admin/get-users")
+    public ResponseEntity getUsers(@RequestParam int page, HttpServletRequest request) {
+        return toResult(service.getAllUsers(request, page).getContent());
+    }
+
+    @CrossOrigin(origins = "http://localhost:9528")
+    @PostMapping("/admin/find-users-by-name")
+    public ResponseEntity findUsersByName(@RequestParam int page, @RequestParam String name, HttpServletRequest request) {
+        return toResult(service.findUsersByName(request, page, name).getContent());
+    }
+
+    @CrossOrigin(origins = "http://localhost:9528")
+    @PostMapping("/admin/find-users-by-email")
+    public ResponseEntity findUsersByEmail(@RequestParam String email, HttpServletRequest request) {
+        return toResult(service.findByEmail(request, email));
+    }
+
+    @CrossOrigin(origins = "http://localhost:9528")
+    @PostMapping("/admin/validate-token")
+    public ResponseEntity adminValidateToken(HttpServletRequest request) {
+        return toResult(service.adminValidateToken(request));
+    }
+
+    @CrossOrigin(origins = "http://localhost:9528")
+    @PostMapping("/admin/get-all-users-info")
+    public ResponseEntity getAllUsersInfo(HttpServletRequest request) {
+        return toResult(service.getAllUsersInfo(request));
+    }
+
+    @PostMapping("/user/get-info")
+    public ResponseEntity getUserInfo(HttpServletRequest request) {
+        return toResult(service.getUserInfo(request));
     }
 }

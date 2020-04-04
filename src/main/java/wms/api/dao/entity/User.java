@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Data
@@ -37,6 +38,9 @@ public class User implements Serializable {
 
     @Column(name = "status")
     private boolean active;
+
+    @Column(name = "createdDate")
+    private String createdDate;
 
     @Column(name = "avatar")
     private String avatar;

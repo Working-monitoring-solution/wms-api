@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import wms.api.dao.entity.User;
 import wms.api.dao.repo.UserRepository;
 import wms.api.exception.WMSException;
 import wms.api.service.internal.TokenService;
@@ -48,10 +49,17 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public boolean validateUserToken(String token) {
+    public User validateUserToken(String token) {
         try {
-            Long userId = Long.valueOf(Jwts.parser().setSigningKey(secretkey).parseClaimsJws(token).getBody().getSubject());
-            return ObjectUtils.isEmpty(userId);
+            Long userId = getIdFromToken(token);
+            User user = userRepository.findById(userId).orElse(null);
+            if (ObjectUtils.isEmpty(user)) {
+                throw new WMSException.NotFoundEntityException();
+            }
+            if (!user.isActive()) {
+                throw new WMSException.UserNotActiveException();
+            }
+            return user;
         } catch (Exception e) {
             throw new WMSException.AuthenticationErrorException();
         }

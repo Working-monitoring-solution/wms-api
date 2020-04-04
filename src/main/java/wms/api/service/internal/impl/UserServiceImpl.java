@@ -4,10 +4,16 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import wms.api.common.request.AdminLoginRequest;
 import wms.api.common.request.ChangeInformationRequest;
+import wms.api.common.response.GetAllUsersInfoResponse;
+import wms.api.constant.WMSConstant;
 import wms.api.exception.WMSException;
 import wms.api.util.Constant;
 import wms.api.common.request.CreateUserRequest;
@@ -18,7 +24,8 @@ import wms.api.service.impl.BaseServiceImpl;
 import wms.api.service.internal.UserService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long> implements UserService {
@@ -59,12 +66,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
         if (repo.existsByEmail(createUserRequest.getEmail())) {
             throw new WMSException.EmailExistException();
         }
-
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         User user = User.builder()
                 .email(createUserRequest.getEmail())
                 .name(createUserRequest.getName())
                 .password(hashPassword(createUserRequest.getPassword()))
-                .avatar(createUserRequest.getAvatar())
+                .createdDate(format.format(new Date()))
                 .active(true)
                 .build();
         user = repo.save(user);
@@ -84,22 +91,59 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
     }
 
     @Override
-    public List<User> getAllUsers(HttpServletRequest request) {
+    public Page<User> getAllUsers(HttpServletRequest request, int page) {
         String token = getTokenFromHeader(request);
         tokenService.validateAdminToken(token);
-        return repo.findAll();
+        Pageable pageable = PageRequest.of(page, WMSConstant.PAGE_SIZE_DEFAULT, Sort.by("id").ascending());
+        return repo.findAll(pageable);
     }
 
     @Override
     public User changeUserInformation(ChangeInformationRequest changeInformationRequest, HttpServletRequest request) {
         String token = getTokenFromHeader(request);
-        tokenService.validateUserToken(token);
-        Long id = tokenService.getIdFromToken(token);
-        User user = repo.findById(id).orElse(null);
+        User user = tokenService.validateUserToken(token);
         user.setAvatar(changeInformationRequest.getAvatar());
         user.setPassword(hashPassword(changeInformationRequest.getPassword()));
         user = repo.save(user);
         return user;
+    }
+
+    @Override
+    public Page<User> findUsersByName(HttpServletRequest request, int page, String name) {
+        String token = getTokenFromHeader(request);
+        tokenService.validateAdminToken(token);
+        Pageable pageable = PageRequest.of(page, WMSConstant.PAGE_SIZE_DEFAULT, Sort.by("id").ascending());
+        return repo.findByNameContains(name.trim(), pageable);
+    }
+
+    @Override
+    public User findByEmail(HttpServletRequest request, String email) {
+        String token = getTokenFromHeader(request);
+        tokenService.validateAdminToken(token);
+        return repo.findByEmail(email);
+    }
+
+    @Override
+    public Boolean adminValidateToken(HttpServletRequest request) {
+        String token = getTokenFromHeader(request);
+        return tokenService.validateAdminToken(token);
+
+    }
+
+    @Override
+    public User getUserInfo(HttpServletRequest request) {
+        String token = getTokenFromHeader(request);
+        return tokenService.validateUserToken(token);
+    }
+
+    @Override
+    public GetAllUsersInfoResponse getAllUsersInfo(HttpServletRequest request) {
+        long usersCount = repo.count();
+        int pagesCount = (int) (usersCount / WMSConstant.PAGE_SIZE_DEFAULT);
+        return GetAllUsersInfoResponse.builder()
+                .usersCount(usersCount)
+                .pagesCount(pagesCount++)
+                .build();
     }
 
     private void adminAuthentication(AdminLoginRequest request) {
