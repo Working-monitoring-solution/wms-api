@@ -85,8 +85,8 @@ public class WMSException extends RuntimeException {
             super(WMSCode.INVALID_INPUT_CODE, WMSCode.INVALID_INPUT_MESSAGE);
         }
 
-        public InvalidInputException(String message) {
-            super(WMSCode.INVALID_INPUT_CODE, message);
+        public InvalidInputException(String field) {
+            super(WMSCode.INVALID_INPUT_CODE, field, WMSCode.INVALID_INPUT_MESSAGE);
         }
 
         public InvalidInputException(String field, String message) {

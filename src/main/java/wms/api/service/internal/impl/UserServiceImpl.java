@@ -3,6 +3,7 @@ package wms.api.service.internal.impl;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,11 +11,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
 import wms.api.common.request.AdminLoginRequest;
 import wms.api.common.request.ChangeInformationRequest;
 import wms.api.common.response.GetAllUsersInfoResponse;
+import wms.api.common.response.SearchUserResponse;
 import wms.api.constant.WMSConstant;
 import wms.api.exception.WMSException;
+import wms.api.service.internal.FirebaseService;
 import wms.api.util.Constant;
 import wms.api.common.request.CreateUserRequest;
 import wms.api.common.request.UserLoginRequest;
@@ -35,6 +39,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
 
     @Value("${spring.jwt.admin.password}")
     String adminPassword;
+
+    @Value("${spring.user.default-avatar-url}")
+    String defaultAvatar;
+
+    @Autowired
+    FirebaseService firebaseService;
 
     @Override
     public String login(UserLoginRequest request) {
@@ -71,6 +81,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
                 .email(createUserRequest.getEmail())
                 .name(createUserRequest.getName())
                 .password(hashPassword(createUserRequest.getPassword()))
+                .avatar(defaultAvatar)
                 .createdDate(format.format(new Date()))
                 .active(true)
                 .build();
@@ -102,25 +113,56 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
     public User changeUserInformation(ChangeInformationRequest changeInformationRequest, HttpServletRequest request) {
         String token = getTokenFromHeader(request);
         User user = tokenService.validateUserToken(token);
-        user.setAvatar(changeInformationRequest.getAvatar());
+        MultipartFile avatar = changeInformationRequest.getAvatar();
+        if (!avatar.isEmpty()) {
+            String url = firebaseService.saveImage(avatar, user.getId().toString());
+            user.setAvatar(url);
+        }
         user.setPassword(hashPassword(changeInformationRequest.getPassword()));
         user = repo.save(user);
         return user;
     }
 
     @Override
-    public Page<User> findUsersByName(HttpServletRequest request, int page, String name) {
+    public SearchUserResponse findUsersByName(HttpServletRequest request, int page, String name) {
         String token = getTokenFromHeader(request);
         tokenService.validateAdminToken(token);
+        long usersCount = repo.countAllByNameContains(name);
+        int pagesCount = (int) (usersCount / WMSConstant.PAGE_SIZE_DEFAULT);
         Pageable pageable = PageRequest.of(page, WMSConstant.PAGE_SIZE_DEFAULT, Sort.by("id").ascending());
-        return repo.findByNameContains(name.trim(), pageable);
+        return SearchUserResponse.builder()
+                .usersCount(usersCount)
+                .pagesCount(pagesCount)
+                .userList(repo.findByNameContains(name.trim(), pageable).getContent())
+                .build();
     }
 
     @Override
-    public User findByEmail(HttpServletRequest request, String email) {
+    public SearchUserResponse findUsersByEmail(HttpServletRequest request, String email, int page) {
         String token = getTokenFromHeader(request);
         tokenService.validateAdminToken(token);
-        return repo.findByEmail(email);
+        long usersCount = repo.countAllByEmailContains(email);
+        int pagesCount = (int) (usersCount / WMSConstant.PAGE_SIZE_DEFAULT);
+        Pageable pageable = PageRequest.of(page, WMSConstant.PAGE_SIZE_DEFAULT, Sort.by("id").ascending());
+        return SearchUserResponse.builder()
+                .usersCount(usersCount)
+                .pagesCount(pagesCount)
+                .userList(repo.findByEmailContains(email.trim(), pageable).getContent())
+                .build();
+    }
+
+    @Override
+    public SearchUserResponse findUsersByEmailandName(HttpServletRequest request, String email, String name, int page) {
+        String token = getTokenFromHeader(request);
+        tokenService.validateAdminToken(token);
+        long usersCount = repo.countAllByEmailContainsAndNameContains(email, name);
+        int pagesCount = (int) (usersCount / WMSConstant.PAGE_SIZE_DEFAULT);
+        Pageable pageable = PageRequest.of(page, WMSConstant.PAGE_SIZE_DEFAULT, Sort.by("id").ascending());
+        return SearchUserResponse.builder()
+                .usersCount(usersCount)
+                .pagesCount(pagesCount)
+                .userList(repo.findByEmailContainsAndNameContains(email, name, pageable).getContent())
+                .build();
     }
 
     @Override

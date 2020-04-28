@@ -60,7 +60,7 @@ public class ExceptionHandle extends ResponseEntityExceptionHandler {
             WMSResponse<String> response = new WMSResponse<String>();
             response.setCode(WMSCode.CONNECTION_TIMEOUT);
             response.setMessage(WMSCode.CONNECTION_TIMEOUT_DESCRIPTION);
-            return new ResponseEntity<WMSResponse<String>>(response, null,
+            return new ResponseEntity<>(response, null,
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
         WMSResponse<String> response = new WMSResponse<String>();
@@ -71,15 +71,15 @@ public class ExceptionHandle extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(WMSException.class)
-    public ResponseEntity<WMSResponse<String>> handleVPBusinessException(final HttpServletRequest request,
+    public ResponseEntity<WMSResponse<String>> handleWMSException(final HttpServletRequest request,
                                                                          final Exception e) {
         log.info(e.getMessage(), e);
         String lang = StringUtils.isEmpty(request.getParameter("lang")) ? "vi" : request.getParameter("lang");
         Locale locale = new Locale(lang);
 
-        WMSException vpException = (WMSException) e;
-        String code = vpException.getCode();
-        String args = translate((String) vpException.getData(), locale);
+        WMSException wmsException = (WMSException) e;
+        String code = wmsException.getCode();
+        String args = translate((String) wmsException.getData(), locale);
 
         // if data is existed, select the MessageSource which contains placeholder(s)
         String message = StringUtils.isEmpty(args) ?
@@ -141,7 +141,7 @@ public class ExceptionHandle extends ResponseEntityExceptionHandler {
         WMSResponse<String> response = new WMSResponse<String>();
         response.setCode(WMSCode.UNKNOWN_ERROR);
         response.setMessage(WMSCode.UNKNOWN_ERROR_MESSAGE);
-        return new ResponseEntity<WMSResponse<String>>(response, null,
+        return new ResponseEntity(response, null,
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

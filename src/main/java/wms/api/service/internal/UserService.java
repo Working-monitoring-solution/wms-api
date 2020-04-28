@@ -6,6 +6,7 @@ import wms.api.common.request.ChangeInformationRequest;
 import wms.api.common.request.CreateUserRequest;
 import wms.api.common.request.UserLoginRequest;
 import wms.api.common.response.GetAllUsersInfoResponse;
+import wms.api.common.response.SearchUserResponse;
 import wms.api.dao.entity.User;
 import wms.api.service.BaseService;
 
@@ -25,9 +26,11 @@ public interface UserService extends BaseService<User, Long> {
 
     Page<User> getAllUsers(HttpServletRequest request, int page);
 
-    Page<User> findUsersByName(HttpServletRequest request, int page, String name);
+    SearchUserResponse findUsersByName(HttpServletRequest request, int page, String name);
 
-    User findByEmail(HttpServletRequest request, String email);
+    SearchUserResponse findUsersByEmail(HttpServletRequest request, String email, int page);
+
+    SearchUserResponse findUsersByEmailandName(HttpServletRequest request, String email, String name, int page);
 
     Boolean adminValidateToken(HttpServletRequest request);
 

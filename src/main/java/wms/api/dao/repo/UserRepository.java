@@ -8,7 +8,20 @@ import wms.api.dao.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findByEmail(String email);
+
+    Page<User> findByEmailContains(String email, Pageable pageable);
+
     Boolean existsByEmail(String email);
+
     Page<User> findByNameContains(String name, Pageable pageable);
+
+    User findByEmail(String email);
+
+    Page<User> findByEmailContainsAndNameContains(String email, String name, Pageable pageable);
+
+    Long countAllByNameContains(String name);
+
+    Long countAllByEmailContains(String email);
+
+    Long countAllByEmailContainsAndNameContains(String email, String name);
 }
