@@ -40,9 +40,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
     @Value("${spring.jwt.admin.password}")
     String adminPassword;
 
-    @Value("${spring.user.default-avatar-url}")
-    String defaultAvatar;
-
     @Autowired
     FirebaseService firebaseService;
 
@@ -81,7 +78,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
                 .email(createUserRequest.getEmail())
                 .name(createUserRequest.getName())
                 .password(hashPassword(createUserRequest.getPassword()))
-                .avatar(defaultAvatar)
+                .avatar(WMSConstant.DEFAULT_AVATAR_URL)
                 .createdDate(format.format(new Date()))
                 .active(true)
                 .build();
@@ -114,6 +111,9 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
         String token = getTokenFromHeader(request);
         User user = tokenService.validateUserToken(token);
         MultipartFile avatar = changeInformationRequest.getAvatar();
+        if (avatar.getSize() > WMSConstant.MAX_SIZE_AVATAR) {
+            throw new WMSException.InvalidInputException("avatar");
+        }
         if (!avatar.isEmpty()) {
             String url = firebaseService.saveImage(avatar, user.getId().toString());
             user.setAvatar(url);

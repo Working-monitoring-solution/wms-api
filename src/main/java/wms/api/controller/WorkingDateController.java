@@ -1,20 +1,20 @@
 package wms.api.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import wms.api.common.request.SendLocationRequest;
+import wms.api.service.internal.WorkingDateService;
+import wms.api.transform.Transform;
 
-import java.util.Date;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/working-date")
-public class WorkingDateController {
+public class WorkingDateController extends AbstractController<WorkingDateService, Transform>{
 
     @PostMapping("/send-location")
-    public ResponseEntity sendLocation(@RequestBody SendLocationRequest sendLocationRequest) {
-        return null;
+    public ResponseEntity sendLocation(@RequestBody SendLocationRequest sendLocationRequest, HttpServletRequest request) {
+        return toResult(service.handleLocation(sendLocationRequest, request));
     }
 }

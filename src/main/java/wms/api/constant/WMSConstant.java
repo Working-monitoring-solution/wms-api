@@ -10,4 +10,7 @@ public class WMSConstant {
 
     public static final String PAGE_SORT_ASC = "ASC";
 
+    public static final String DEFAULT_AVATAR_URL = "https://www.googleapis.com/download/storage/v1/b/wms-firebase-a9f5a.appspot.com/o/default?generation=1588091356608694&alt=media";
+
+    public static final long MAX_SIZE_AVATAR = 45900000L;
 }
