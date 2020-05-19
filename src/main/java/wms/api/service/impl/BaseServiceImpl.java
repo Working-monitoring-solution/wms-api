@@ -9,12 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import wms.api.service.internal.TokenService;
-import wms.api.util.InputValidator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
-public abstract class BaseServiceImpl<R extends JpaRepository<T, ID>, T, ID> extends InputValidator {
+public abstract class BaseServiceImpl<R extends JpaRepository<T, ID>, T, ID> {
 
     @Value("${spring.jwt.secretkey}")
     protected String secretkey;

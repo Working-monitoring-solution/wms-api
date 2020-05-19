@@ -51,37 +51,16 @@ public class ExceptionHandle extends ResponseEntityExceptionHandler {
         dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
     }
 
-    @ExceptionHandler(NumberFormatException.class)
-    public ResponseEntity<WMSResponse<String>> handleNumberFormatException(final HttpServletRequest request,
-                                                                           final Exception e) {
-
-        log.info(e.getMessage(), e);
-        if (e.getMessage().contains("SocketTimeoutException")) {
-            WMSResponse<String> response = new WMSResponse<String>();
-            response.setCode(WMSCode.CONNECTION_TIMEOUT);
-            response.setMessage(WMSCode.CONNECTION_TIMEOUT_DESCRIPTION);
-            return new ResponseEntity<>(response, null,
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        WMSResponse<String> response = new WMSResponse<String>();
-        response.setCode(WMSCode.NUMBER_FORMAT_CODE);
-        response.setMessage(e.getMessage());
-        logger.info(" response : {} \n", JsonMapper.writeValueAsString(response));
-        return new ResponseEntity<WMSResponse<String>>(response, null, HttpStatus.OK);
-    }
-
     @ExceptionHandler(WMSException.class)
     public ResponseEntity<WMSResponse<String>> handleWMSException(final HttpServletRequest request,
                                                                          final Exception e) {
         log.info(e.getMessage(), e);
-        String lang = StringUtils.isEmpty(request.getParameter("lang")) ? "vi" : request.getParameter("lang");
-        Locale locale = new Locale(lang);
+        Locale locale = new Locale("en");
 
         WMSException wmsException = (WMSException) e;
         String code = wmsException.getCode();
-        String args = translate((String) wmsException.getData(), locale);
+        String args = wmsException.getField();
 
-        // if data is existed, select the MessageSource which contains placeholder(s)
         String message = StringUtils.isEmpty(args) ?
                 messageSource.getMessage(
                         "err." + code, null,
@@ -99,16 +78,6 @@ public class ExceptionHandle extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, null, HttpStatus.OK);
     }
 
-
-    @ExceptionHandler({AccessDeniedException.class})
-    public ResponseEntity<Object> handleAccessDeniedException(Exception ex, WebRequest request) {
-
-        log.info(ex.getMessage(), ex);
-
-        return new ResponseEntity<Object>(
-                "Access denied", new HttpHeaders(), HttpStatus.FORBIDDEN);
-    }
-
     @ExceptionHandler(IOException.class)
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE) // (1)
     public ResponseEntity<WMSResponse<String>> handleIOException(final HttpServletRequest request,
@@ -119,18 +88,6 @@ public class ExceptionHandle extends ResponseEntityExceptionHandler {
         response.setCode(WMSCode.CONNECTION_TIMEOUT);
         response.setMessage(WMSCode.CONNECTION_TIMEOUT_DESCRIPTION);
         return new ResponseEntity<WMSResponse<String>>(response, null, HttpStatus.GATEWAY_TIMEOUT);
-    }
-
-    @ExceptionHandler(SocketTimeoutException.class)
-    public ResponseEntity<WMSResponse<String>> handleTimeoutException(final HttpServletRequest request,
-                                                                      final Exception e) {
-
-        log.info(e.getMessage(), e);
-        WMSResponse<String> response = new WMSResponse<String>();
-        response.setCode(WMSCode.CONNECTION_TIMEOUT);
-        response.setMessage(WMSCode.CONNECTION_TIMEOUT_DESCRIPTION);
-        return new ResponseEntity<WMSResponse<String>>(response, null,
-                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -154,56 +111,5 @@ public class ExceptionHandle extends ResponseEntityExceptionHandler {
         response.setMessage(WMSCode.UNKNOWN_ERROR_MESSAGE);
         logger.info(" response : {} \n", JsonMapper.writeValueAsString(response));
         return new ResponseEntity<WMSResponse<String>>(response, null, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler({ConstraintViolationException.class})
-    public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
-        // Build Message
-        Optional<ConstraintViolation<?>> opt = ex.getConstraintViolations().stream().findFirst();
-        if (!opt.isPresent()) return new ResponseEntity<>(ex, HttpStatus.BAD_REQUEST);
-
-        String field = opt.get().getPropertyPath().toString();
-        String message = getMessage(request, field, opt.get().getMessage());
-
-        WMSResponse<String> response = new WMSResponse<>();
-        response.setCode(WMSCode.INVALID_INPUT_CODE);
-        response.setMessage(message);
-        return new ResponseEntity<>(response, null, HttpStatus.OK);
-    }
-
-    private String translate(String str, Locale loc) {
-        if (StringUtils.isEmpty(str)) return "";
-
-        Pattern p = Pattern.compile("\\{([^}]*)\\}");
-        Matcher m = p.matcher(str);
-        while (m.find()) {
-            String ph = m.group(0);
-            String key = m.group(1);
-            String value = messageSource.getMessage(key, null, key, loc);
-            str = str.replace(ph, value);
-        }
-        return str;
-    }
-
-    private String getMessage(WebRequest request, String fieldName, String messageTemplate) {
-        String message = messageTemplate;
-        String lang = StringUtils.isEmpty(request.getParameter("lang")) ? "vi" : request.getParameter("lang");
-        String[] data = messageTemplate.split(";");
-        fieldName = lastField(fieldName);
-        fieldName = messageSource.getMessage(fieldName, null, fieldName, new Locale(lang));
-        Object[] params = new Object[]{fieldName};
-        if (data.length > 1) {
-            message = data[0];
-            Object[] extraParams = Arrays.stream(data, 1, data.length).toArray();
-            params = Stream.of(params, extraParams).flatMap(Stream::of).toArray(Object[]::new);
-        }
-        return messageSource.getMessage(message, params, message, new Locale(lang));
-    }
-
-    private String lastField(String fields) {
-        if (StringUtils.isEmpty(fields)) return "";
-
-        String[] list = fields.split("\\.");
-        return list[list.length - 1];
     }
 }

@@ -2,6 +2,7 @@ package wms.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import wms.api.common.request.AdminLoginRequest;
 import wms.api.common.request.ChangeInformationRequest;
@@ -9,14 +10,16 @@ import wms.api.common.request.CreateUserRequest;
 import wms.api.common.request.UserLoginRequest;
 import wms.api.service.internal.FirebaseService;
 import wms.api.service.internal.UserService;
-import wms.api.transform.UserTransform;
+import wms.api.transform.Transform;
+import wms.api.util.Utils;
 
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api")
-public class UserController extends AbstractController<UserService, UserTransform> {
+@Validated
+public class UserController extends AbstractController<UserService, Transform> {
 
     @Autowired
     FirebaseService firebaseService;
@@ -27,7 +30,7 @@ public class UserController extends AbstractController<UserService, UserTransfor
     }
 
     @PostMapping("/user/login")
-    public ResponseEntity<?> login(@RequestBody UserLoginRequest loginRequest) {
+    public ResponseEntity login(@RequestBody UserLoginRequest loginRequest) {
         return toResult(service.login(loginRequest));
     }
 
@@ -46,24 +49,34 @@ public class UserController extends AbstractController<UserService, UserTransfor
         return toResult(service.changeActiveStatus(id, request));
     }
 
-    @PostMapping("/admin/get-users")
-    public ResponseEntity getUsers(@RequestParam int page, HttpServletRequest request) {
-        return toResult(service.getAllUsers(request, page).getContent());
+    @PostMapping("/admin/change-role-admin-status")
+    public ResponseEntity changeRoleAdminStatus(@RequestParam String id, HttpServletRequest request) {
+        return toResult(service.changeRoleAdminStatus(id, request));
     }
 
-    @PostMapping("/admin/find-users-by-name")
-    public ResponseEntity findUsersByName(@RequestParam int page, @RequestParam String name, HttpServletRequest request) {
-        return toResult(service.findUsersByName(request, page, name));
+    @PostMapping("/admin/change-user-info")
+    public ResponseEntity changeManager(@RequestParam String userId,
+                                        @RequestParam String managerId,
+                                        @RequestParam boolean status,
+                                        @RequestParam String department,
+                                        @RequestParam String position,
+                                        HttpServletRequest request) {
+        return toResult(service.changeUserInfo(userId, managerId, status, department, position, request));
     }
 
-    @PostMapping("/admin/find-users-by-email")
-    public ResponseEntity findUsersByEmail(@RequestParam String email, @RequestParam int page, HttpServletRequest request) {
-        return toResult(service.findUsersByEmail(request, email, page));
+    @PostMapping("/admin/search-users")
+    public ResponseEntity searchUsers(@RequestParam(value = "page", defaultValue = "0") String page,
+                                      @RequestParam(value = "name", required = false) String name,
+                                      @RequestParam(value = "email", required = false) String email,
+                                      @RequestParam(value = "position", required = false) String position,
+                                      @RequestParam(value = "department", required = false) String department,
+                                      HttpServletRequest request) {
+        return toResult(service.searchUser(name, email, position, department, Utils.toInt(page, "page"), request));
     }
 
-    @PostMapping("/admin/find-users-by-email-and-name")
-    public ResponseEntity findUsersByEmailandName(@RequestParam String email, @RequestParam String name, @RequestParam int page, HttpServletRequest request) {
-        return toResult(service.findUsersByEmailandName(request, email, name, page));
+    @PostMapping("/admin/get-user-by-id")
+    public ResponseEntity findUsersById(@RequestParam String id, HttpServletRequest request) {
+        return toResult(service.getUserById(id, request));
     }
 
     @PostMapping("/admin/validate-token")
@@ -71,19 +84,28 @@ public class UserController extends AbstractController<UserService, UserTransfor
         return toResult(service.adminValidateToken(request));
     }
 
-    @PostMapping("/admin/get-all-users-info")
-    public ResponseEntity getAllUsersInfo(HttpServletRequest request) {
-        return toResult(service.getAllUsersInfo(request));
-    }
-
     @PostMapping("/user/get-info")
     public ResponseEntity getUserInfo(HttpServletRequest request) {
         return toResult(service.getUserInfo(request));
     }
 
-//  Just for testing
-//    @PostMapping("/test")
-//    public ResponseEntity test(@RequestBody MultipartFile file) {
-//        return toResult(firebaseService.saveImage(file, "1"));
-//    }
+    @GetMapping("/admin/get-all-manager")
+    public ResponseEntity getAllManger(HttpServletRequest request) {
+        return toResult(service.getAllManager(request));
+    }
+
+    @GetMapping("/admin/get-department")
+    public ResponseEntity getDepartment(HttpServletRequest request) {
+        return toResult(service.getDepartments(request));
+    }
+
+    @GetMapping("/admin/get-position")
+    public ResponseEntity getPosition(@RequestParam String departmentId, HttpServletRequest request) {
+        return toResult(service.getPosition(departmentId, request));
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity logout(HttpServletRequest request) {
+        return toResult(service.logout(request));
+    }
 }

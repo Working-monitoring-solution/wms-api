@@ -1,12 +1,12 @@
 package wms.api.dao.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
+import wms.api.util.Utils;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Data
@@ -39,8 +39,30 @@ public class User implements Serializable {
     private boolean active;
 
     @Column(name = "createdDate")
-    private String createdDate;
+    @JsonFormat(pattern = Utils.ddMMyyyy)
+    private Date createdDate;
 
     @Column(name = "avatar")
     private String avatar;
+
+    @Column(name = "role_admin")
+    private boolean roleAdmin;
+
+    @ManyToOne
+    @JoinColumn(name = "manager_id")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private User manager;
+
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Department department;
+
+    @ManyToOne
+    @JoinColumn(name = "position_id")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Position position;
 }
