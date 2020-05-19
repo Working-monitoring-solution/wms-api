@@ -1,8 +1,6 @@
 package wms.api.dao.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,6 +8,9 @@ import java.io.Serializable;
 @Data
 @Entity
 @Table(name = "report_month")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ReportMonth implements Serializable {
 
     private static final long serialVersionUID = -2420743188803222830L;
@@ -25,12 +26,14 @@ public class ReportMonth implements Serializable {
     @ToString.Exclude
     private User user;
 
-    // MMYYYY
-    @Column(name = "month_year")
-    private String monthYear;
+    @Column(name = "month")
+    private int month;
 
-    @Column(name = "day_off_no_permission")
-    private int dayOffNoPermission;
+    @Column(name = "year")
+    private int year;
+
+    @Column(name = "unauthorized_absence")
+    private int unauthorizedAbsence;
 
     @Column(name = "day_off")
     private int dayOff;
@@ -45,5 +48,5 @@ public class ReportMonth implements Serializable {
     private int homeSoon;
 
     @Column(name = "offsite_time")
-    private int offsiteTime;
+    private int offSiteTime;
 }

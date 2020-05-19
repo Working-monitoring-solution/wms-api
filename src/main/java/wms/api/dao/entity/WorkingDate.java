@@ -1,16 +1,20 @@
 package wms.api.dao.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
+import wms.api.util.Utils;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Data
 @Entity
 @Table(name = "working_date")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class WorkingDate implements Serializable {
 
     private static final long serialVersionUID = -6488011147337624813L;
@@ -21,6 +25,7 @@ public class WorkingDate implements Serializable {
     private Long id;
 
     @Column(name = "date")
+    @JsonFormat(pattern = Utils.ddMMyyyy)
     private Date date;
 
     @ManyToOne
@@ -33,13 +38,15 @@ public class WorkingDate implements Serializable {
     private boolean permission;
 
     @Column(name = "created_at")
-    private Date createAt;
+    @JsonFormat(pattern = Utils.ddMMyyyyHHmmSS)
+    private Timestamp createAt;
 
     @Column(name = "updated_at")
-    private Date updatedAt;
+    @JsonFormat(pattern = Utils.ddMMyyyyHHmmSS)
+    private Timestamp updatedAt;
 
     @Column(name = "is_come_out")
-    private boolean isComeOut;
+    private boolean comeOut;
 
     @Column(name = "at_0800")
     private boolean at0800;
