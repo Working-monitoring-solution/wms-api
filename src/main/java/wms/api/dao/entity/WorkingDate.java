@@ -37,13 +37,13 @@ public class WorkingDate implements Serializable {
     @Column(name = "permission")
     private boolean permission;
 
-    @Column(name = "created_at")
+    @Column(name = "check_in")
     @JsonFormat(pattern = Utils.ddMMyyyyHHmmSS)
-    private Timestamp createAt;
+    private Timestamp checkIn;
 
-    @Column(name = "updated_at")
+    @Column(name = "check_out")
     @JsonFormat(pattern = Utils.ddMMyyyyHHmmSS)
-    private Timestamp updatedAt;
+    private Timestamp checkOut;
 
     @Column(name = "is_come_out")
     private boolean comeOut;

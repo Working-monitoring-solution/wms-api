@@ -15,16 +15,16 @@ public interface WorkingDateRepository extends JpaRepository<WorkingDate, Long> 
 
     WorkingDate getByDateAndUser(Date date, User user);
 
-    Long countByUserAndDateBetweenAndCreateAtIsNotNull(User user, Date firstDate, Date lastDate);
+    Long countByUserAndDateBetweenAndCheckInIsNotNull(User user, Date firstDate, Date lastDate);
 
-    Long countByUserAndDateBetweenAndCreateAtIsNullAndPermissionIsFalse(User user, Date firstDate, Date lastDate);
+    Long countByUserAndDateBetweenAndCheckInIsNullAndPermissionIsFalse(User user, Date firstDate, Date lastDate);
 
-    Long countByUserAndDateBetweenAndCreateAtIsNullAndPermissionIsTrue(User user, Date firstDate, Date lastDate);
+    Long countByUserAndDateBetweenAndCheckInIsNullAndPermissionIsTrue(User user, Date firstDate, Date lastDate);
 
-    Long countByUserAndDateBetweenAndCreateAtIsNotNullAndAt0800IsFalse(User user, Date firstDate, Date lastDate);
+    Long countByUserAndDateBetweenAndCheckInIsNotNullAndAt0800IsFalse(User user, Date firstDate, Date lastDate);
 
-    Long countByUserAndDateBetweenAndCreateAtIsNotNullAndAt1700IsFalse(User user, Date firstDate, Date lastDate);
+    Long countByUserAndDateBetweenAndCheckInIsNotNullAndAt1700IsFalse(User user, Date firstDate, Date lastDate);
 
-    Long countByUserAndDateBetweenAndCreateAtIsNotNullAndComeOutIsTrue(User user, Date firstDate, Date lastDate);
+    Long countByUserAndDateBetweenAndCheckInIsNotNullAndComeOutIsTrue(User user, Date firstDate, Date lastDate);
 
 }

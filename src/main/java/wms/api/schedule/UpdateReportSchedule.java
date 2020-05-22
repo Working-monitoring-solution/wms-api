@@ -42,12 +42,12 @@ public class UpdateReportSchedule {
             List<User> users = userRepository.findAllByActiveIsTrue();
             List<ReportMonth> reportMonths = new ArrayList<>();
             users.forEach(user -> {
-                int unauthorizedAbsence = workingDateRepository.countByUserAndDateBetweenAndCreateAtIsNullAndPermissionIsFalse(user, firstDayOfMonth, lastDayOfMonth).intValue();
-                int dayOff = workingDateRepository.countByUserAndDateBetweenAndCreateAtIsNullAndPermissionIsTrue(user, firstDayOfMonth, lastDayOfMonth).intValue();
-                int workDate = workingDateRepository.countByUserAndDateBetweenAndCreateAtIsNotNull(user, firstDayOfMonth, lastDayOfMonth).intValue();
-                int workLate = workingDateRepository.countByUserAndDateBetweenAndCreateAtIsNotNullAndAt0800IsFalse(user, firstDayOfMonth, lastDayOfMonth).intValue();
-                int homeSoon = workingDateRepository.countByUserAndDateBetweenAndCreateAtIsNotNullAndAt1700IsFalse(user, firstDayOfMonth, lastDayOfMonth).intValue();
-                int offSiteTime = workingDateRepository.countByUserAndDateBetweenAndCreateAtIsNotNullAndComeOutIsTrue(user, firstDayOfMonth, lastDayOfMonth).intValue();
+                int unauthorizedAbsence = workingDateRepository.countByUserAndDateBetweenAndCheckInIsNullAndPermissionIsFalse(user, firstDayOfMonth, lastDayOfMonth).intValue();
+                int dayOff = workingDateRepository.countByUserAndDateBetweenAndCheckInIsNullAndPermissionIsTrue(user, firstDayOfMonth, lastDayOfMonth).intValue();
+                int workDate = workingDateRepository.countByUserAndDateBetweenAndCheckInIsNotNull(user, firstDayOfMonth, lastDayOfMonth).intValue();
+                int workLate = workingDateRepository.countByUserAndDateBetweenAndCheckInIsNotNullAndAt0800IsFalse(user, firstDayOfMonth, lastDayOfMonth).intValue();
+                int homeSoon = workingDateRepository.countByUserAndDateBetweenAndCheckInIsNotNullAndAt1700IsFalse(user, firstDayOfMonth, lastDayOfMonth).intValue();
+                int offSiteTime = workingDateRepository.countByUserAndDateBetweenAndCheckInIsNotNullAndComeOutIsTrue(user, firstDayOfMonth, lastDayOfMonth).intValue();
                 ReportMonth reportMonth = ReportMonth.builder()
                         .user(user)
                         .month(month)

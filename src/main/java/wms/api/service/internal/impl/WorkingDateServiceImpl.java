@@ -114,8 +114,8 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
                 DateFormat dateFormat = new SimpleDateFormat(Utils.ddMMyyyy);
                 row.createCell(0).setCellValue(dateFormat.format(workingDate.getDate()));
                 row.createCell(1).setCellValue(workingDate.getUser().getId());
-                row.createCell(2).setCellValue(workingDate.getCreateAt());
-                row.createCell(3).setCellValue(workingDate.getUpdatedAt());
+                row.createCell(2).setCellValue(workingDate.getCheckIn());
+                row.createCell(3).setCellValue(workingDate.getCheckOut());
                 row.createCell(4).setCellValue(workingDate.isPermission());
                 row.createCell(5).setCellValue(workingDate.isAt0800());
                 row.createCell(6).setCellValue(workingDate.isAt0815());
@@ -292,10 +292,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
     // check if location is in the company
     private boolean checkLocation(SendLocationRequest request) {
         double distance = getDistance(Utils.toDouble(request.getLatitude()), Utils.toDouble(request.getLongtitude()));
-        if (distance > WMSConstant.ALLOW_DISTANCE) {
-            return false;
-        }
-        return true;
+        return !(distance > WMSConstant.ALLOW_DISTANCE);
     }
 
     // get distance (meters) from location to company coordinates
@@ -313,370 +310,370 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
     private WorkingDate update(int hour, int minute, boolean checkValue, WorkingDate workingDate) {
         if ((hour < 8) || (hour == 8 && minute < 9)) {
             workingDate.setAt0800(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 8 && minute > 12 && minute < 24) {
             workingDate.setAt0815(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt0800() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 8 && minute > 27 && minute < 39) {
             workingDate.setAt0830(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt0815() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 8 && minute > 42 && minute < 54) {
             workingDate.setAt0845(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt0830() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if ((hour == 8 && minute > 57) || (hour == 9 && minute < 9)) {
             workingDate.setAt0900(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt0845() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 9 && minute > 12 && minute < 24) {
             workingDate.setAt0915(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt0900() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 9 && minute > 27 && minute < 39) {
             workingDate.setAt0930(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt0915() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 9 && minute > 42 && minute < 54) {
             workingDate.setAt0945(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt0930() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if ((hour == 9 && minute > 57) || (hour == 10 && minute < 9)) {
             workingDate.setAt1000(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt0945() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 10 && minute > 12 && minute < 24) {
             workingDate.setAt1015(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1000() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 10 && minute > 27 && minute < 39) {
             workingDate.setAt1030(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1015() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 10 && minute > 42 && minute < 54) {
             workingDate.setAt1045(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1030() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if ((hour == 10 && minute > 57) || (hour == 11 && minute < 9)) {
             workingDate.setAt1100(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1045() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 11 && minute > 12 && minute < 24) {
             workingDate.setAt1115(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1100() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 11 && minute > 27 && minute < 39) {
             workingDate.setAt1130(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1115() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 11 && minute > 42 && minute < 54) {
             workingDate.setAt1145(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1130() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if ((hour == 11 && minute > 57) || (hour == 12 && minute < 9)) {
             workingDate.setAt1200(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1145() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if ((hour == 12 && minute > 57) || (hour == 13 && minute < 9)) {
             workingDate.setAt1300(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1200() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 13 && minute > 12 && minute < 24) {
             workingDate.setAt1315(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1300() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 13 && minute > 27 && minute < 39) {
             workingDate.setAt1330(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1315() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 13 && minute > 42 && minute < 54) {
             workingDate.setAt1345(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1330() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if ((hour == 13 && minute > 57) || (hour == 14 && minute < 9)) {
             workingDate.setAt1400(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1345() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 14 && minute > 12 && minute < 24) {
             workingDate.setAt1415(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1400() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 14 && minute > 27 && minute < 39) {
             workingDate.setAt1430(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1415() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 14 && minute > 42 && minute < 54) {
             workingDate.setAt1445(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1430() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if ((hour == 14 && minute > 57) || (hour == 15 && minute < 9)) {
             workingDate.setAt1500(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1445() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 15 && minute > 12 && minute < 24) {
             workingDate.setAt1515(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1500() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 15 && minute > 27 && minute < 39) {
             workingDate.setAt1530(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1515() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 15 && minute > 42 && minute < 54) {
             workingDate.setAt1545(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1530() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if ((hour == 15 && minute > 57) || (hour == 16 && minute < 9)) {
             workingDate.setAt1600(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1545() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 16 && minute > 12 && minute < 24) {
             workingDate.setAt1615(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1600() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 16 && minute > 27 && minute < 39) {
             workingDate.setAt1630(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1615() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if (hour == 16 && minute > 42 && minute < 54) {
             workingDate.setAt1645(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1630() && !checkValue) {
                 workingDate.setComeOut(true);
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         if ((hour == 16 && minute > 57) || (hour == 17 && minute < 9)) {
             workingDate.setAt1700(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCreateAt())) {
-                workingDate.setCreateAt(new Timestamp(new Date().getTime()));
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+                workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
-            workingDate.setUpdatedAt(new Timestamp(new Date().getTime()));
+            workingDate.setCheckOut(new Timestamp(new Date().getTime()));
             return repo.save(workingDate);
         }
         return workingDate;
