@@ -15,14 +15,18 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.TimeZone;
 
 @SpringBootApplication(scanBasePackageClasses = ApiApplication.class)
 @ComponentScan("wms.api.*")
+@EnableScheduling
 public class ApiApplication extends SpringBootServletInitializer {
 
     @Value("${app.firebase-configuration-file}")
@@ -69,4 +73,10 @@ public class ApiApplication extends SpringBootServletInitializer {
                 .build();
         return FirebaseApp.initializeApp(options);
     }
+
+    @PostConstruct
+    public void init(){
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
+
 }

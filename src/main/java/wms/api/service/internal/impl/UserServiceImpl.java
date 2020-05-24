@@ -14,7 +14,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import wms.api.common.request.AdminLoginRequest;
 import wms.api.common.request.ChangeInformationRequest;
-import wms.api.common.response.GetManagerResponse;
+import wms.api.common.response.ManagerResponse;
 import wms.api.constant.WMSConstant;
 import wms.api.dao.entity.Department;
 import wms.api.dao.entity.Position;
@@ -162,14 +162,14 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
     }
 
     @Override
-    public List<GetManagerResponse> getAllManager(HttpServletRequest request) {
+    public List<ManagerResponse> getAllManager(HttpServletRequest request) {
         String token = getTokenFromHeader(request);
         User user = tokenService.validateAdminToken(token);
-        List<GetManagerResponse> listManager = new ArrayList<>();
+        List<ManagerResponse> listManager = new ArrayList<>();
         if (checkHighestRole(user)) {
             List<User> managers = repo.findAllByActiveIsTrueAndRoleAdminIsTrue();
             managers.forEach(manager -> {
-                GetManagerResponse managerResponse = GetManagerResponse.builder()
+                ManagerResponse managerResponse = ManagerResponse.builder()
                         .email(manager.getEmail())
                         .name(manager.getName())
                         .id(manager.getId())
@@ -177,7 +177,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
                 listManager.add(managerResponse);
             });
         } else {
-            GetManagerResponse managerResponse = GetManagerResponse.builder()
+            ManagerResponse managerResponse = ManagerResponse.builder()
                     .email(user.getEmail())
                     .name(user.getName())
                     .id(user.getId())

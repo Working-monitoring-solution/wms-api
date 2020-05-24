@@ -5,7 +5,7 @@ import wms.api.common.request.AdminLoginRequest;
 import wms.api.common.request.ChangeInformationRequest;
 import wms.api.common.request.CreateUserRequest;
 import wms.api.common.request.UserLoginRequest;
-import wms.api.common.response.GetManagerResponse;
+import wms.api.common.response.ManagerResponse;
 import wms.api.dao.entity.Department;
 import wms.api.dao.entity.Position;
 import wms.api.dao.entity.User;
@@ -31,7 +31,7 @@ public interface UserService extends BaseService<User, Long> {
     User changeUserInfo(String userId, String managerId, boolean status, String department,
                         String position, HttpServletRequest request);
 
-    List<GetManagerResponse> getAllManager(HttpServletRequest request);
+    List<ManagerResponse> getAllManager(HttpServletRequest request);
 
     User changeUserInformation(ChangeInformationRequest changeInformationRequest, HttpServletRequest request);
 

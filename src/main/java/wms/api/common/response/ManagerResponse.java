@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GetManagerResponse {
+public class ManagerResponse {
     private long id;
     private String email;
     private String name;

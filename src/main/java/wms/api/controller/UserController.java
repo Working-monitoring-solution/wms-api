@@ -1,6 +1,5 @@
 package wms.api.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -8,9 +7,8 @@ import wms.api.common.request.AdminLoginRequest;
 import wms.api.common.request.ChangeInformationRequest;
 import wms.api.common.request.CreateUserRequest;
 import wms.api.common.request.UserLoginRequest;
-import wms.api.service.internal.FirebaseService;
 import wms.api.service.internal.UserService;
-import wms.api.transform.Transform;
+import wms.api.transform.UserTransform;
 import wms.api.util.Utils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,14 +17,11 @@ import javax.servlet.http.HttpServletRequest;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api")
 @Validated
-public class UserController extends AbstractController<UserService, Transform> {
-
-    @Autowired
-    FirebaseService firebaseService;
+public class UserController extends AbstractController<UserService, UserTransform> {
 
     @PostMapping("/admin/create-user")
     public ResponseEntity createUser(@RequestBody CreateUserRequest createUserRequest, HttpServletRequest request) {
-        return toResult(service.createUser(createUserRequest, request));
+        return toResult(transform.toUserResponse(service.createUser(createUserRequest, request)));
     }
 
     @PostMapping("/user/login")
@@ -36,7 +31,7 @@ public class UserController extends AbstractController<UserService, Transform> {
 
     @PostMapping("/user/change-information")
     public ResponseEntity changeUserInformation(@RequestBody ChangeInformationRequest changeInformationRequest, HttpServletRequest request) {
-        return toResult(service.changeUserInformation(changeInformationRequest, request));
+        return toResult(transform.toUserResponse(service.changeUserInformation(changeInformationRequest, request)));
     }
 
     @PostMapping("/admin/login")
@@ -46,12 +41,12 @@ public class UserController extends AbstractController<UserService, Transform> {
 
     @PostMapping("/admin/change-active-status")
     public ResponseEntity changeActiveStatus(@RequestParam String id, HttpServletRequest request) {
-        return toResult(service.changeActiveStatus(id, request));
+        return toResult(transform.toUserResponse(service.changeActiveStatus(id, request)));
     }
 
     @PostMapping("/admin/change-role-admin-status")
     public ResponseEntity changeRoleAdminStatus(@RequestParam String id, HttpServletRequest request) {
-        return toResult(service.changeRoleAdminStatus(id, request));
+        return toResult(transform.toUserResponse(service.changeRoleAdminStatus(id, request)));
     }
 
     @PostMapping("/admin/change-user-info")
@@ -61,7 +56,7 @@ public class UserController extends AbstractController<UserService, Transform> {
                                         @RequestParam String department,
                                         @RequestParam String position,
                                         HttpServletRequest request) {
-        return toResult(service.changeUserInfo(userId, managerId, status, department, position, request));
+        return toResult(transform.toUserResponse(service.changeUserInfo(userId, managerId, status, department, position, request)));
     }
 
     @PostMapping("/admin/search-users")
@@ -71,12 +66,17 @@ public class UserController extends AbstractController<UserService, Transform> {
                                       @RequestParam(value = "position", required = false) String position,
                                       @RequestParam(value = "department", required = false) String department,
                                       HttpServletRequest request) {
-        return toResult(service.searchUser(name, email, position, department, Utils.toInt(page, "page"), request));
+        return toResult(transform.toPageUserResponse(service.searchUser(name,
+                email,
+                position,
+                department,
+                Utils.toInt(page, "page"),
+                request)));
     }
 
     @PostMapping("/admin/get-user-by-id")
     public ResponseEntity findUsersById(@RequestParam String id, HttpServletRequest request) {
-        return toResult(service.getUserById(id, request));
+        return toResult(transform.toUserResponse(service.getUserById(id, request)));
     }
 
     @PostMapping("/admin/validate-token")
@@ -84,9 +84,9 @@ public class UserController extends AbstractController<UserService, Transform> {
         return toResult(service.adminValidateToken(request));
     }
 
-    @PostMapping("/user/get-info")
+    @GetMapping("/user/get-info")
     public ResponseEntity getUserInfo(HttpServletRequest request) {
-        return toResult(service.getUserInfo(request));
+        return toResult(transform.toUserResponse(service.getUserInfo(request)));
     }
 
     @GetMapping("/admin/get-all-manager")

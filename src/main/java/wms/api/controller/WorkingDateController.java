@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wms.api.common.request.SendLocationRequest;
 import wms.api.service.internal.WorkingDateService;
-import wms.api.transform.Transform;
+import wms.api.transform.WorkingDateTransform;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/working-date")
-public class WorkingDateController extends AbstractController<WorkingDateService, Transform> {
+public class WorkingDateController extends AbstractController<WorkingDateService, WorkingDateTransform> {
 
     @PostMapping("/send-location")
     public ResponseEntity sendLocation(@RequestBody SendLocationRequest sendLocationRequest, HttpServletRequest request) {
@@ -33,17 +33,17 @@ public class WorkingDateController extends AbstractController<WorkingDateService
     public ResponseEntity createRequest(@RequestParam String date,
                                         @RequestParam String reason,
                                         HttpServletRequest request) {
-        return toResult(service.createRequest(date, reason, request));
+        return toResult(transform.toRequestResponse(service.createRequest(date, reason, request)));
     }
 
     @GetMapping(value = "/approve-request")
     public ResponseEntity approve(@RequestParam String requestId, HttpServletRequest request) {
-        return toResult(service.approve(requestId, request));
+        return toResult(transform.toRequestResponse(service.approve(requestId, request)));
     }
 
     @GetMapping(value = "/deny-request")
     public ResponseEntity deny(@RequestParam String requestId, HttpServletRequest request) {
-        return toResult(service.deny(requestId, request));
+        return toResult(transform.toRequestResponse(service.deny(requestId, request)));
     }
 
     @GetMapping(value = "/get-reason")
@@ -53,17 +53,17 @@ public class WorkingDateController extends AbstractController<WorkingDateService
 
     @GetMapping(value = "/user/get-pending-request")
     public ResponseEntity userGetPendingRequest(HttpServletRequest request) {
-        return toResult(service.userGetPendingRequest(request));
+        return toResult(transform.toListRequestResponse(service.userGetPendingRequest(request)));
     }
 
     @GetMapping(value = "/user/get-handled-request")
     public ResponseEntity userGetHandledRequest(@RequestParam String page, HttpServletRequest request) {
-        return toResult(service.userGetHandledRequest(request, page));
+        return toResult(transform.toPageRequestResponse(service.userGetHandledRequest(request, page)));
     }
 
     @GetMapping(value = "/admin/get-pending-request")
     public ResponseEntity adminGetPendingRequest(@RequestParam String page, HttpServletRequest request) {
-        return toResult(service.adminGetPendingRequest(request, page));
+        return toResult(transform.toPageRequestResponse(service.adminGetPendingRequest(request, page)));
     }
 
     @GetMapping(value = "/admin/count-pending-request")
@@ -73,6 +73,6 @@ public class WorkingDateController extends AbstractController<WorkingDateService
 
     @GetMapping(value = "/admin/get-handled-request")
     public ResponseEntity adminGetHandledRequest(@RequestParam String page, HttpServletRequest request) {
-        return toResult(service.adminGetHandledRequest(request, page));
+        return toResult(transform.toPageRequestResponse(service.adminGetHandledRequest(request, page)));
     }
 }

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import wms.api.dao.entity.ReportMonth;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetUserReportResponse {
-    private List<ReportMonth> reportYear;
-    private ReportMonth reportMonth;
+public class UserReportResponse {
+    private List<ReportResponse> reportYear;
+    private ReportResponse reportMonth;
 }

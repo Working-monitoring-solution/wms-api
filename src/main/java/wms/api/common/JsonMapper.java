@@ -28,31 +28,4 @@ public class JsonMapper {
         }
     }
 
-    public static <T> T convertJsonToObject(String jsonStr, final Class<T> clazz) {
-        try {
-            return mapper.readValue(jsonStr, clazz);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            return null;
-        }
-    }
-
-    public static <T> T convertJsonToObject(String jsonStr, final TypeReference<T> reference) {
-        try {
-            return mapper.readValue(jsonStr, reference);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            return null;
-        }
-    }
-
-    public static <T> List<T> convertJsonToListObject(String jsonStr) {
-        try {
-            return mapper.readValue(jsonStr, new TypeReference<List<T>>() {
-            });
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            return new LinkedList<>();
-        }
-    }
 }

@@ -3,8 +3,8 @@ package wms.api.service.internal.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import wms.api.common.response.GetUserReportResponse;
-import wms.api.common.response.ReportYear;
+import wms.api.common.response.ReportResponse;
+import wms.api.common.response.UserReportResponse;
 import wms.api.dao.entity.ReportMonth;
 import wms.api.dao.entity.User;
 import wms.api.dao.repo.ReportMonthRepository;
@@ -12,9 +12,11 @@ import wms.api.dao.repo.UserRepository;
 import wms.api.exception.WMSException;
 import wms.api.service.impl.BaseServiceImpl;
 import wms.api.service.internal.ReportMonthService;
+import wms.api.transform.ReportTransform;
 import wms.api.util.Utils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,8 +25,11 @@ public class ReportMonthServiceImpl extends BaseServiceImpl<ReportMonthRepositor
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    ReportTransform reportTransform;
+
     @Override
-    public GetUserReportResponse getUserReportById(String userId, String month, String year, HttpServletRequest request) {
+    public UserReportResponse getUserReportById(String userId, String month, String year, HttpServletRequest request) {
         String token = getTokenFromHeader(request);
         Long userIdInRequest = tokenService.getIdFromToken(token);
         Long userIdToLong = Utils.toLong(userId);
@@ -39,13 +44,14 @@ public class ReportMonthServiceImpl extends BaseServiceImpl<ReportMonthRepositor
         }
         reportMonth.setUser(null);
         List<ReportMonth> reportYear = repo.getByUserAndYearOrderByMonthAsc(user, Utils.toInt(year, "year"));
+        List<ReportResponse> reportYearResponses = new ArrayList<>();
         for (ReportMonth report : reportYear) {
-            report.setUser(null);
+            reportYearResponses.add(reportTransform.toReportResponse(report));
         }
-        GetUserReportResponse getUserReportResponse = GetUserReportResponse.builder()
-                .reportMonth(reportMonth)
-                .reportYear(reportYear)
+        UserReportResponse userReportResponse = UserReportResponse.builder()
+                .reportMonth(reportTransform.toReportResponse(reportMonth))
+                .reportYear(reportYearResponses)
                 .build();
-        return getUserReportResponse;
+        return userReportResponse;
     }
 }
