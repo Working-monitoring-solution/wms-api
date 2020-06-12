@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import wms.api.common.request.AdminLoginRequest;
-import wms.api.common.request.ChangeInformationRequest;
 import wms.api.common.response.ManagerResponse;
 import wms.api.constant.WMSConstant;
 import wms.api.dao.entity.Department;
@@ -188,10 +187,21 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
     }
 
     @Override
-    public User changeUserInformation(ChangeInformationRequest changeInformationRequest, HttpServletRequest request) {
+    public User changePassword(String password, String currentPassword, HttpServletRequest request) {
         String token = getTokenFromHeader(request);
         User user = tokenService.validateUserToken(token);
-        MultipartFile avatar = changeInformationRequest.getAvatar();
+        if (!authenticate(user.getPassword(), currentPassword)) {
+            throw new WMSException.InvalidInputException("Password");
+        }
+        user.setPassword(hashPassword(password));
+        return repo.save(user);
+    }
+
+    @Override
+    public User changeAvatar(MultipartFile file, HttpServletRequest request) {
+        String token = getTokenFromHeader(request);
+        User user = tokenService.validateUserToken(token);
+        MultipartFile avatar = file;
         if (avatar.getSize() > WMSConstant.MAX_SIZE_AVATAR) {
             throw new WMSException.InvalidInputException("avatar");
         }
@@ -199,9 +209,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
             String url = firebaseService.saveImage(avatar, user.getId().toString());
             user.setAvatar(url);
         }
-        user.setPassword(hashPassword(changeInformationRequest.getPassword()));
-        user = repo.save(user);
-        return user;
+        return repo.save(user);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package wms.api.service.internal;
 
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 import wms.api.common.request.AdminLoginRequest;
-import wms.api.common.request.ChangeInformationRequest;
 import wms.api.common.request.CreateUserRequest;
 import wms.api.common.request.UserLoginRequest;
 import wms.api.common.response.ManagerResponse;
@@ -33,7 +33,9 @@ public interface UserService extends BaseService<User, Long> {
 
     List<ManagerResponse> getAllManager(HttpServletRequest request);
 
-    User changeUserInformation(ChangeInformationRequest changeInformationRequest, HttpServletRequest request);
+    User changePassword(String password, String currentPassword, HttpServletRequest request);
+
+    User changeAvatar(MultipartFile file, HttpServletRequest request);
 
     User getUserById(String id, HttpServletRequest request);
 

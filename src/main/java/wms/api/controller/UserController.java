@@ -4,7 +4,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import wms.api.common.request.AdminLoginRequest;
-import wms.api.common.request.ChangeInformationRequest;
 import wms.api.common.request.CreateUserRequest;
 import wms.api.common.request.UserLoginRequest;
 import wms.api.service.internal.UserService;
@@ -29,10 +28,15 @@ public class UserController extends AbstractController<UserService, UserTransfor
         return toResult(service.login(loginRequest));
     }
 
-    @PostMapping("/user/change-information")
-    public ResponseEntity changeUserInformation(@RequestBody ChangeInformationRequest changeInformationRequest, HttpServletRequest request) {
-        return toResult(transform.toUserResponse(service.changeUserInformation(changeInformationRequest, request)));
+    @GetMapping("/user/change-password")
+    public ResponseEntity changePassword(@RequestParam(value = "password") String password, @RequestParam(value = "currentPassword") String currentPassword, HttpServletRequest request) {
+        return toResult(transform.toUserResponse(service.changePassword(password, currentPassword, request)));
     }
+
+//    @PostMapping("/user/change-avatar")
+//    public ResponseEntity changeUserInformation( changeInformationRequest, HttpServletRequest request) {
+//        return toResult(transform.toUserResponse(service.changeAvatar(changeInformationRequest, request)));
+//    }
 
     @PostMapping("/admin/login")
     public ResponseEntity loginAdmin(@RequestBody AdminLoginRequest loginRequest) {
