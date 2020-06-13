@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import wms.api.common.response.ManagerResponse;
 import wms.api.common.response.RequestResponse;
+import wms.api.common.response.RequestResponseMobile;
 import wms.api.dao.entity.Request;
 
 import java.util.ArrayList;
@@ -36,10 +37,26 @@ public class WorkingDateTransform {
                 .build();
     }
 
+    public RequestResponseMobile toRequestResponseMobile(Request request) {
+        return RequestResponseMobile.builder()
+                .date(request.getDate())
+                .reason(request.getReason())
+                .status(request.getStatus())
+                .build();
+    }
+
     public List<RequestResponse> toListRequestResponse(List<Request> requestList) {
         List<RequestResponse> responseList = new ArrayList<>();
         for (Request request : requestList) {
             responseList.add(toRequestResponse(request));
+        }
+        return responseList;
+    }
+
+    public List<RequestResponseMobile> toListRequestResponseMobile(List<Request> requestList) {
+        List<RequestResponseMobile> responseList = new ArrayList<>();
+        for (Request request : requestList) {
+            responseList.add(toRequestResponseMobile(request));
         }
         return responseList;
     }

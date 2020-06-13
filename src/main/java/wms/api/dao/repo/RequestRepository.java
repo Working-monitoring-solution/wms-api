@@ -15,6 +15,8 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     List<Request> getByUserAndStatus(User user, String status);
 
+    List<Request> getByUser(User user);
+
     Page<Request> getByUserAndStatusNotLike(User user, String status, Pageable pageable);
 
     Page<Request> getByManagerAndStatus(User manager, String status, Pageable pageable);

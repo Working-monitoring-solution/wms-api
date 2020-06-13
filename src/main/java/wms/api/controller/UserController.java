@@ -3,6 +3,7 @@ package wms.api.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import wms.api.common.request.AdminLoginRequest;
 import wms.api.common.request.CreateUserRequest;
 import wms.api.common.request.UserLoginRequest;
@@ -33,10 +34,10 @@ public class UserController extends AbstractController<UserService, UserTransfor
         return toResult(transform.toUserResponse(service.changePassword(password, currentPassword, request)));
     }
 
-//    @PostMapping("/user/change-avatar")
-//    public ResponseEntity changeUserInformation( changeInformationRequest, HttpServletRequest request) {
-//        return toResult(transform.toUserResponse(service.changeAvatar(changeInformationRequest, request)));
-//    }
+    @PostMapping("/user/change-avatar")
+    public ResponseEntity changeAvatar(@RequestParam(value = "avatar", required = false)MultipartFile file, HttpServletRequest request) {
+        return toResult(transform.toUserResponse(service.changeAvatar(file, request)));
+    }
 
     @PostMapping("/admin/login")
     public ResponseEntity loginAdmin(@RequestBody AdminLoginRequest loginRequest) {

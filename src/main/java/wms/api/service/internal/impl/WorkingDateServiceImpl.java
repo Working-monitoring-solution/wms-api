@@ -241,6 +241,12 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
     }
 
     @Override
+    public List<Request> userGetRequestMobile(HttpServletRequest request) {
+        User user = tokenService.validateUserToken(getTokenFromHeader(request));
+        return requestRepository.getByUser(user);
+    }
+
+    @Override
     public Page<Request> adminGetPendingRequest(HttpServletRequest request, String page) {
         User manager = tokenService.validateAdminToken(getTokenFromHeader(request));
         Pageable pageable = PageRequest.of(Utils.toInt(page, "page"),

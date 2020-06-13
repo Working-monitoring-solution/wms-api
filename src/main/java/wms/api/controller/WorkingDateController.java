@@ -61,6 +61,11 @@ public class WorkingDateController extends AbstractController<WorkingDateService
         return toResult(transform.toPageRequestResponse(service.userGetHandledRequest(request, page)));
     }
 
+    @GetMapping(value = "/user/get-handled-request-mobile")
+    public ResponseEntity userGetHandledRequest( HttpServletRequest request) {
+        return toResult(transform.toListRequestResponseMobile(service.userGetRequestMobile(request)));
+    }
+
     @GetMapping(value = "/admin/get-pending-request")
     public ResponseEntity adminGetPendingRequest(@RequestParam String page, HttpServletRequest request) {
         return toResult(transform.toPageRequestResponse(service.adminGetPendingRequest(request, page)));

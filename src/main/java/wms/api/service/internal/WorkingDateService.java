@@ -28,6 +28,8 @@ public interface WorkingDateService extends BaseService<WorkingDate, Long> {
 
     Page<Request> userGetHandledRequest(HttpServletRequest request, String page);
 
+    List<Request> userGetRequestMobile(HttpServletRequest request);
+
     Page<Request> adminGetPendingRequest(HttpServletRequest request, String page);
 
     Long adminCountPendingRequest(HttpServletRequest request);
