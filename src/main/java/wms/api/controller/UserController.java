@@ -5,6 +5,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import wms.api.common.request.AdminLoginRequest;
+import wms.api.common.request.ChangePasswordRequest;
 import wms.api.common.request.CreateUserRequest;
 import wms.api.common.request.UserLoginRequest;
 import wms.api.service.internal.UserService;
@@ -19,42 +20,47 @@ import javax.servlet.http.HttpServletRequest;
 @Validated
 public class UserController extends AbstractController<UserService, UserTransform> {
 
-    @PostMapping("/admin/create-user")
+    @RequestMapping(value = "/admin/create-user", method = {RequestMethod.POST})
     public ResponseEntity createUser(@RequestBody CreateUserRequest createUserRequest, HttpServletRequest request) {
         return toResult(transform.toUserResponse(service.createUser(createUserRequest, request)));
     }
 
-    @PostMapping("/user/login")
+    @RequestMapping(value = "/user/login", method = {RequestMethod.GET})
     public ResponseEntity login(@RequestBody UserLoginRequest loginRequest) {
         return toResult(service.login(loginRequest));
     }
 
-    @GetMapping("/user/change-password")
-    public ResponseEntity changePassword(@RequestParam(value = "password") String password, @RequestParam(value = "currentPassword") String currentPassword, HttpServletRequest request) {
-        return toResult(transform.toUserResponse(service.changePassword(password, currentPassword, request)));
+    @RequestMapping(value = "/user/device-token", method = {RequestMethod.PUT})
+    public ResponseEntity updateDeviceToken(@RequestParam String deviceToken, HttpServletRequest request) {
+        return toResult(service.updateDeviceToken(request,deviceToken));
     }
 
-    @PostMapping("/user/change-avatar")
-    public ResponseEntity changeAvatar(@RequestParam(value = "avatar", required = false)MultipartFile file, HttpServletRequest request) {
+    @RequestMapping(value = "/user/change-password", method = {RequestMethod.PUT})
+    public ResponseEntity changePassword(@RequestBody ChangePasswordRequest changePasswordRequest, HttpServletRequest request) {
+        return toResult(transform.toUserResponse(service.changePassword(changePasswordRequest.getPassword(), changePasswordRequest.getCurrentPassword(), request)));
+    }
+
+    @RequestMapping(value = "/user/change-avatar", method = {RequestMethod.PUT})
+    public ResponseEntity changeAvatar(@RequestParam(value = "avatar", required = false) MultipartFile file, HttpServletRequest request) {
         return toResult(transform.toUserResponse(service.changeAvatar(file, request)));
     }
 
-    @PostMapping("/admin/login")
+    @RequestMapping(value = "/admin/login", method = {RequestMethod.GET})
     public ResponseEntity loginAdmin(@RequestBody AdminLoginRequest loginRequest) {
         return toResult(service.loginAdmin(loginRequest));
     }
 
-    @PostMapping("/admin/change-active-status")
+    @RequestMapping(value = "/admin/change-active-status", method = {RequestMethod.PUT})
     public ResponseEntity changeActiveStatus(@RequestParam String id, HttpServletRequest request) {
         return toResult(transform.toUserResponse(service.changeActiveStatus(id, request)));
     }
 
-    @PostMapping("/admin/change-role-admin-status")
+    @RequestMapping(value = "/admin/change-role-admin-status", method = {RequestMethod.PUT})
     public ResponseEntity changeRoleAdminStatus(@RequestParam String id, HttpServletRequest request) {
         return toResult(transform.toUserResponse(service.changeRoleAdminStatus(id, request)));
     }
 
-    @PostMapping("/admin/change-user-info")
+    @RequestMapping(value = "/admin/change-user-info", method = {RequestMethod.PUT})
     public ResponseEntity changeManager(@RequestParam String userId,
                                         @RequestParam String managerId,
                                         @RequestParam boolean status,
@@ -64,7 +70,7 @@ public class UserController extends AbstractController<UserService, UserTransfor
         return toResult(transform.toUserResponse(service.changeUserInfo(userId, managerId, status, department, position, request)));
     }
 
-    @PostMapping("/admin/search-users")
+    @RequestMapping(value = "/admin/search-users", method = {RequestMethod.GET})
     public ResponseEntity searchUsers(@RequestParam(value = "page", defaultValue = "0") String page,
                                       @RequestParam(value = "name", required = false) String name,
                                       @RequestParam(value = "email", required = false) String email,
@@ -79,37 +85,37 @@ public class UserController extends AbstractController<UserService, UserTransfor
                 request)));
     }
 
-    @PostMapping("/admin/get-user-by-id")
+    @RequestMapping(value = "/admin/get-user-by-id", method = {RequestMethod.GET})
     public ResponseEntity findUsersById(@RequestParam String id, HttpServletRequest request) {
         return toResult(transform.toUserResponse(service.getUserById(id, request)));
     }
 
-    @PostMapping("/admin/validate-token")
+    @RequestMapping(value = "/admin/validate-token", method = {RequestMethod.GET})
     public ResponseEntity adminValidateToken(HttpServletRequest request) {
         return toResult(service.adminValidateToken(request));
     }
 
-    @GetMapping("/user/get-info")
+    @RequestMapping(value = "/user/get-info", method = {RequestMethod.GET})
     public ResponseEntity getUserInfo(HttpServletRequest request) {
         return toResult(transform.toUserResponse(service.getUserInfo(request)));
     }
 
-    @GetMapping("/admin/get-all-manager")
+    @RequestMapping(value = "/admin/get-all-manager", method = {RequestMethod.GET})
     public ResponseEntity getAllManger(HttpServletRequest request) {
         return toResult(service.getAllManager(request));
     }
 
-    @GetMapping("/admin/get-department")
+    @RequestMapping(value = "/admin/get-department", method = {RequestMethod.GET})
     public ResponseEntity getDepartment(HttpServletRequest request) {
         return toResult(service.getDepartments(request));
     }
 
-    @GetMapping("/admin/get-position")
+    @RequestMapping(value = "/admin/get-position", method = {RequestMethod.GET})
     public ResponseEntity getPosition(@RequestParam String departmentId, HttpServletRequest request) {
         return toResult(service.getPosition(departmentId, request));
     }
 
-    @GetMapping("/logout")
+    @RequestMapping(value = "/logout", method = {RequestMethod.GET})
     public ResponseEntity logout(HttpServletRequest request) {
         return toResult(service.logout(request));
     }

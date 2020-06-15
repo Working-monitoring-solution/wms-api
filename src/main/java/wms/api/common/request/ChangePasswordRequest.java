@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SendLocationRequest {
-    private String latitude;
-    private String longitude;
+public class ChangePasswordRequest {
+    private String password;
+    private String currentPassword;
 }

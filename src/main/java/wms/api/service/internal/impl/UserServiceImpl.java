@@ -60,6 +60,15 @@ public class UserServiceImpl extends BaseServiceImpl<UserRepository, User, Long>
     }
 
     @Override
+    public String updateDeviceToken(HttpServletRequest request, String deviceToken) {
+        String token = getTokenFromHeader(request);
+        User user = tokenService.validateUserToken(token);
+        user.setDeviceToken(deviceToken);
+        repo.save(user);
+        return null;
+    }
+
+    @Override
     public String loginAdmin(AdminLoginRequest request) {
         User user = handleLogin(request.getUsername(), request.getPassword());
         if (!user.isRoleAdmin()) {

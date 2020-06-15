@@ -18,6 +18,8 @@ public interface UserService extends BaseService<User, Long> {
 
     String login(UserLoginRequest request);
 
+    String updateDeviceToken(HttpServletRequest request, String deviceToken);
+
     String loginAdmin(AdminLoginRequest request);
 
     String logout(HttpServletRequest request);

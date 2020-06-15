@@ -3,6 +3,10 @@ package wms.api.service.internal.impl;
 import com.google.cloud.storage.*;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.cloud.StorageClient;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +34,23 @@ public class FirebaseServiceImpl implements FirebaseService {
         } catch (NullPointerException e) {
             throw new WMSException.InvalidInputException("image");
         } catch (Exception e) {
+            throw new WMSException.UnknownException();
+        }
+    }
+
+    @Override
+    public void pushMessage(String token, String title, String message) {
+        try {
+            Notification notification = Notification.builder()
+                    .setTitle(title)
+                    .setBody(message)
+                    .build();
+            Message messageFirebase = Message.builder()
+                    .setToken(token)
+                    .setNotification(notification)
+                    .build();
+            FirebaseMessaging.getInstance().send(messageFirebase);
+        } catch (FirebaseMessagingException e) {
             throw new WMSException.UnknownException();
         }
     }

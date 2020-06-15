@@ -14,12 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/api/working-date")
 public class WorkingDateController extends AbstractController<WorkingDateService, WorkingDateTransform> {
 
-    @PostMapping("/send-location")
+    @RequestMapping(value = "/send-location", method = {RequestMethod.PUT})
     public ResponseEntity sendLocation(@RequestBody SendLocationRequest sendLocationRequest, HttpServletRequest request) {
         return toResult(service.handleLocation(sendLocationRequest, request));
     }
 
-    @RequestMapping(value = "/get-working-date", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "/get-working-date", method = {RequestMethod.GET})
     public void getAllWorkingDateInMonth(@RequestParam String userId,
                                          @RequestParam String month,
                                          @RequestParam String year,
@@ -29,54 +29,54 @@ public class WorkingDateController extends AbstractController<WorkingDateService
         service.exportExcelDataInMonth(userId, month, year, token, response);
     }
 
-    @GetMapping(value = "/create-request")
+    @RequestMapping(value = "/create-request", method = {RequestMethod.POST})
     public ResponseEntity createRequest(@RequestParam String date,
                                         @RequestParam String reason,
                                         HttpServletRequest request) {
         return toResult(transform.toRequestResponse(service.createRequest(date, reason, request)));
     }
 
-    @GetMapping(value = "/approve-request")
+    @RequestMapping(value = "/approve-request", method = {RequestMethod.PUT})
     public ResponseEntity approve(@RequestParam String requestId, HttpServletRequest request) {
         return toResult(transform.toRequestResponse(service.approve(requestId, request)));
     }
 
-    @GetMapping(value = "/deny-request")
+    @RequestMapping(value = "/deny-request", method = {RequestMethod.PUT})
     public ResponseEntity deny(@RequestParam String requestId, HttpServletRequest request) {
         return toResult(transform.toRequestResponse(service.deny(requestId, request)));
     }
 
-    @GetMapping(value = "/get-reason")
+    @RequestMapping(value = "/get-reason", method = {RequestMethod.GET})
     public ResponseEntity getReason() {
         return toResult(service.getReason());
     }
 
-    @GetMapping(value = "/user/get-pending-request")
+    @RequestMapping(value = "/user/get-pending-request", method = {RequestMethod.GET})
     public ResponseEntity userGetPendingRequest(HttpServletRequest request) {
         return toResult(transform.toListRequestResponse(service.userGetPendingRequest(request)));
     }
 
-    @GetMapping(value = "/user/get-handled-request")
+    @RequestMapping(value = "/user/get-handled-request", method = {RequestMethod.GET})
     public ResponseEntity userGetHandledRequest(@RequestParam String page, HttpServletRequest request) {
         return toResult(transform.toPageRequestResponse(service.userGetHandledRequest(request, page)));
     }
 
-    @GetMapping(value = "/user/get-handled-request-mobile")
+    @RequestMapping(value = "/user/get-handled-request-mobile", method = {RequestMethod.GET})
     public ResponseEntity userGetHandledRequest( HttpServletRequest request) {
         return toResult(transform.toListRequestResponseMobile(service.userGetRequestMobile(request)));
     }
 
-    @GetMapping(value = "/admin/get-pending-request")
+    @RequestMapping(value = "/admin/get-pending-request", method = {RequestMethod.GET})
     public ResponseEntity adminGetPendingRequest(@RequestParam String page, HttpServletRequest request) {
         return toResult(transform.toPageRequestResponse(service.adminGetPendingRequest(request, page)));
     }
 
-    @GetMapping(value = "/admin/count-pending-request")
+    @RequestMapping(value = "/admin/count-pending-request", method = {RequestMethod.GET})
     public ResponseEntity adminCountPendingRequest(HttpServletRequest request) {
         return toResult(service.adminCountPendingRequest(request));
     }
 
-    @GetMapping(value = "/admin/get-handled-request")
+    @RequestMapping(value = "/admin/get-handled-request", method = {RequestMethod.GET})
     public ResponseEntity adminGetHandledRequest(@RequestParam String page, HttpServletRequest request) {
         return toResult(transform.toPageRequestResponse(service.adminGetHandledRequest(request, page)));
     }

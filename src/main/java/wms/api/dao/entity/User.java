@@ -35,6 +35,9 @@ public class User implements Serializable {
     @Column(name = "token")
     private String token;
 
+    @Column(name = "device_token")
+    private String deviceToken;
+
     @Column(name = "status")
     private boolean active;
 

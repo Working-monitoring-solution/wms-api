@@ -20,6 +20,7 @@ import wms.api.dao.repo.UserRepository;
 import wms.api.dao.repo.WorkingDateRepository;
 import wms.api.exception.WMSException;
 import wms.api.service.impl.BaseServiceImpl;
+import wms.api.service.internal.FirebaseService;
 import wms.api.service.internal.WorkingDateService;
 import wms.api.util.Utils;
 
@@ -44,6 +45,9 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
 
     @Autowired
     RequestRepository requestRepository;
+
+    @Autowired
+    FirebaseService firebaseService;
 
     @Override
     public WorkingDate handleLocation(SendLocationRequest sendLocationRequest, HttpServletRequest request) {
@@ -201,6 +205,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         workingDate.setPermission(true);
         request = requestRepository.save(request);
         repo.save(workingDate);
+        firebaseService.pushMessage(request.getUser().getDeviceToken(), "Request approved", "Manager approved your request");
         return request;
     }
 
@@ -210,6 +215,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         Request request = getRequestById(requestId, manager);
         request.setStatus(Request.STATUS_DENIED);
         request = requestRepository.save(request);
+        firebaseService.pushMessage(request.getUser().getDeviceToken(), "Request denied", "Manager denied your request");
         return request;
     }
 
@@ -297,7 +303,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
 
     // check if location is in the company
     private boolean checkLocation(SendLocationRequest request) {
-        double distance = getDistance(Utils.toDouble(request.getLatitude()), Utils.toDouble(request.getLongtitude()));
+        double distance = getDistance(Utils.toDouble(request.getLatitude()), Utils.toDouble(request.getLongitude()));
         return !(distance > WMSConstant.ALLOW_DISTANCE);
     }
 

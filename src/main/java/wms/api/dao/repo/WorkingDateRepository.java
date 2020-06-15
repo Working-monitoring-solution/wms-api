@@ -27,4 +27,6 @@ public interface WorkingDateRepository extends JpaRepository<WorkingDate, Long> 
 
     Long countByUserAndDateBetweenAndCheckInIsNotNullAndComeOutIsTrue(User user, Date firstDate, Date lastDate);
 
+    List<WorkingDate> getByDateAndPermissionIsFalse(Date date);
+
 }
