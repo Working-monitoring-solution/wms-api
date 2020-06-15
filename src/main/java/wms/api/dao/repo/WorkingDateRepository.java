@@ -6,6 +6,7 @@ import wms.api.dao.entity.WorkingDate;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface WorkingDateRepository extends JpaRepository<WorkingDate, Long> {
 
@@ -13,7 +14,7 @@ public interface WorkingDateRepository extends JpaRepository<WorkingDate, Long> 
 
     List<WorkingDate> getByUserAndDateBetween(User user, Date firstDate, Date lastDate);
 
-    WorkingDate getByDateAndUser(Date date, User user);
+    Optional<WorkingDate> getByDateAndUser(Date date, User user);
 
     Long countByUserAndDateBetweenAndCheckInIsNotNull(User user, Date firstDate, Date lastDate);
 

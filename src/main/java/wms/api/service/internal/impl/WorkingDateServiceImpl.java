@@ -31,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -198,7 +199,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         User manager = tokenService.validateAdminToken(getTokenFromHeader(httpServletRequest));
         Request request = getRequestById(requestId, manager);
         request.setStatus(Request.STATUS_APPROVED);
-        WorkingDate workingDate = repo.getByDateAndUser(request.getDate(), request.getUser());
+        WorkingDate workingDate = repo.getByDateAndUser(request.getDate(), request.getUser()).orElseThrow(WMSException.NotFoundEntityException::new);
         if (ObjectUtils.isEmpty(workingDate)) {
             throw new WMSException.NotFoundEntityException("working date");
         }
@@ -281,6 +282,21 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
             return requestRepository.getByStatusNotLike(Request.STATUS_PENDING, pageable);
         }
         return requestRepository.getByManagerAndStatusNotLike(manager, Request.STATUS_PENDING, pageable);
+    }
+
+    @Override
+    public WorkingDate getInfoWorkingDateMobile(String date, HttpServletRequest request) {
+        User user = tokenService.validateUserToken(getTokenFromHeader(request));
+        Date dateFormat;
+        try {
+            dateFormat = new SimpleDateFormat(Utils.ddMMyyyy).parse(date);
+            String dateString = new SimpleDateFormat(Utils.DATE_TIME_MYSQL).format(dateFormat);
+            Date newDate = Utils.toDate(dateString, Utils.DATE_TIME_MYSQL);
+            WorkingDate workingDate = repo.getByDateAndUser(newDate, user).orElseThrow(WMSException.NotFoundEntityException::new);
+            return workingDate;
+        } catch (ParseException e) {
+            throw new WMSException.InvalidInputException();
+        }
     }
 
     private Request getRequestById(String requestId, User manager) {

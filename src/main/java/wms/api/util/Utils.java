@@ -21,6 +21,7 @@ public class Utils {
     public static final String HHmmSSddMMyyyy = "HH:mm:ss dd/MM/yyyy";
 
     public static final String DATE_TIME_MYSQL_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATE_TIME_MYSQL = "yyyy-MM-dd";
 
     public static final String HHmmddMM = "HH:mm dd/MM";
 

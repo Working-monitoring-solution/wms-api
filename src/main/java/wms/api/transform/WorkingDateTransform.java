@@ -5,12 +5,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+import wms.api.common.response.InfoWorkingDateMobile;
 import wms.api.common.response.ManagerResponse;
 import wms.api.common.response.RequestResponse;
 import wms.api.common.response.RequestResponseMobile;
 import wms.api.dao.entity.Request;
+import wms.api.dao.entity.WorkingDate;
+import wms.api.util.Utils;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -66,5 +71,24 @@ public class WorkingDateTransform {
                 requestPage.getPageable(),
                 requestPage.getTotalElements());
         return responsePage;
+    }
+
+    public InfoWorkingDateMobile toInfoWorkingDateMobile(WorkingDate workingDate) {
+        InfoWorkingDateMobile info = new InfoWorkingDateMobile();
+        if (workingDate.getCheckIn() == null) {
+            info.setTimeCheckin(null);
+        } else {
+            String checkin = workingDate.getCheckIn().toString();
+            String checkinMobile = checkin.substring(11, 16);
+            info.setTimeCheckin(checkinMobile);
+        }
+        if (workingDate.getCheckOut() == null) {
+            info.setLastTimeOnsite(null);
+        } else {
+            String checkout = workingDate.getCheckOut().toString();
+            String checkoutMobile = checkout.substring(11, 16);
+            info.setLastTimeOnsite(checkoutMobile);
+        }
+        return info;
     }
 }

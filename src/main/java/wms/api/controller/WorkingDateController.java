@@ -80,4 +80,10 @@ public class WorkingDateController extends AbstractController<WorkingDateService
     public ResponseEntity adminGetHandledRequest(@RequestParam String page, HttpServletRequest request) {
         return toResult(transform.toPageRequestResponse(service.adminGetHandledRequest(request, page)));
     }
+
+    @RequestMapping(value = "/mobile/get-info-working-date", method = {RequestMethod.GET})
+    public ResponseEntity getInfoMobile(@RequestParam String date, HttpServletRequest request) {
+        return toResult(transform.toInfoWorkingDateMobile(service.getInfoWorkingDateMobile(date, request)));
+    }
+
 }
