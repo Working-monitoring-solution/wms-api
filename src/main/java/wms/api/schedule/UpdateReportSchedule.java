@@ -50,7 +50,7 @@ public class UpdateReportSchedule {
                 int offSiteTime = workingDateRepository.countByUserAndDateBetweenAndCheckInIsNotNullAndComeOutIsTrue(user, firstDayOfMonth, lastDayOfMonth).intValue();
                 ReportMonth reportMonth = ReportMonth.builder()
                         .user(user)
-                        .month(month)
+                        .month(month+1)
                         .year(year)
                         .dayOff(dayOff)
                         .unauthorizedAbsence(unauthorizedAbsence)

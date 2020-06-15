@@ -20,4 +20,11 @@ public class ReportController extends AbstractController<ReportMonthService, Rep
                                         HttpServletRequest request) {
         return toResult(service.getUserReportById(userId, month, year, request));
     }
+
+    @GetMapping("/mobile/get-report")
+    public ResponseEntity getUserReportMobile(@RequestParam String month,
+                                        @RequestParam String year,
+                                        HttpServletRequest request) {
+        return toResult(service.getUserReportByIdMobile(month, year, request));
+    }
 }

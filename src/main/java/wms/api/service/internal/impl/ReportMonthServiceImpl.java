@@ -42,7 +42,6 @@ public class ReportMonthServiceImpl extends BaseServiceImpl<ReportMonthRepositor
         if (ObjectUtils.isEmpty(reportMonth)) {
             throw new WMSException.NotFoundEntityException("report month");
         }
-        reportMonth.setUser(null);
         List<ReportMonth> reportYear = repo.getByUserAndYearOrderByMonthAsc(user, Utils.toInt(year, "year"));
         List<ReportResponse> reportYearResponses = new ArrayList<>();
         for (ReportMonth report : reportYear) {
@@ -52,6 +51,19 @@ public class ReportMonthServiceImpl extends BaseServiceImpl<ReportMonthRepositor
                 .reportMonth(reportTransform.toReportResponse(reportMonth))
                 .reportYear(reportYearResponses)
                 .build();
+
         return userReportResponse;
+    }
+
+    @Override
+    public ReportResponse getUserReportByIdMobile(String month, String year, HttpServletRequest request) {
+        String token = getTokenFromHeader(request);
+        Long userId = tokenService.getIdFromToken(token);
+        User user = userRepository.findById(userId).orElseThrow(WMSException.NotFoundEntityException::new);
+        ReportMonth reportMonth = repo.getByUserAndMonthAndYear(user, Utils.toInt(month, "month"), Utils.toInt(year, "year"));
+        if (ObjectUtils.isEmpty(reportMonth)) {
+            throw new WMSException.NotFoundEntityException("report month");
+        }
+        return reportTransform.toReportResponse(reportMonth);
     }
 }
