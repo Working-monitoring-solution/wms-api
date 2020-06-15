@@ -25,7 +25,7 @@ public class UserController extends AbstractController<UserService, UserTransfor
         return toResult(transform.toUserResponse(service.createUser(createUserRequest, request)));
     }
 
-    @RequestMapping(value = "/user/login", method = {RequestMethod.GET})
+    @RequestMapping(value = "/user/login", method = {RequestMethod.POST})
     public ResponseEntity login(@RequestBody UserLoginRequest loginRequest) {
         return toResult(service.login(loginRequest));
     }
@@ -45,7 +45,7 @@ public class UserController extends AbstractController<UserService, UserTransfor
         return toResult(transform.toUserResponse(service.changeAvatar(file, request)));
     }
 
-    @RequestMapping(value = "/admin/login", method = {RequestMethod.GET})
+    @RequestMapping(value = "/admin/login", method = {RequestMethod.POST})
     public ResponseEntity loginAdmin(@RequestBody AdminLoginRequest loginRequest) {
         return toResult(service.loginAdmin(loginRequest));
     }
