@@ -42,16 +42,14 @@ public class ReportMonthServiceImpl extends BaseServiceImpl<ReportMonthRepositor
         if (ObjectUtils.isEmpty(reportMonth)) {
             throw new WMSException.NotFoundEntityException("report month");
         }
-        reportMonth.setUser(null);
         List<ReportMonth> reportYear = repo.getByUserAndYearOrderByMonthAsc(user, Utils.toInt(year, "year"));
         List<ReportResponse> reportYearResponses = new ArrayList<>();
         for (ReportMonth report : reportYear) {
             reportYearResponses.add(reportTransform.toReportResponse(report));
         }
-        UserReportResponse userReportResponse = UserReportResponse.builder()
+        return UserReportResponse.builder()
                 .reportMonth(reportTransform.toReportResponse(reportMonth))
                 .reportYear(reportYearResponses)
                 .build();
-        return userReportResponse;
     }
 }
