@@ -22,13 +22,13 @@ public class CreateNewWorkingDateSchedule {
     // schedule create new records workingDate of all employees for next month
     // start at first day of month
     @Scheduled(cron = "0 0 0 1 * *")
+    // @Scheduled(cron = "0 * * * * *")
     public void createNewWorkingDateMonthly() {
-
         // Get all work day of next week
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(new Date());
         calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.add(Calendar.MONTH, 0);
+        calendar.add(Calendar.MONTH, 1);
         List<Integer> listWeekday = new ArrayList<>();
         for (int date = 1; date <= calendar.getActualMaximum(Calendar.DAY_OF_MONTH); date++) {
             calendar.set(Calendar.DAY_OF_MONTH, date);

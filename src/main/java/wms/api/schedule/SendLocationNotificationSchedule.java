@@ -5,6 +5,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.MulticastMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import wms.api.dao.entity.User;
 import wms.api.dao.entity.WorkingDate;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Component
 public class SendLocationNotificationSchedule {
 
     @Autowired
@@ -24,6 +26,7 @@ public class SendLocationNotificationSchedule {
     private List<String> deviceTokenList = new ArrayList<>();
 
     private void pushMessage() {
+        if (ObjectUtils.isEmpty(deviceTokenList)) return;
         try {
             MulticastMessage message = MulticastMessage.builder()
                     .addAllTokens(deviceTokenList)
@@ -36,6 +39,7 @@ public class SendLocationNotificationSchedule {
     }
 
     @Scheduled(cron = "0 0 0 * * 2-6")
+    // @Scheduled(cron = "0 * * * * *")
     private void getListDeviceToken() {
         deviceTokenList.clear();
         List<WorkingDate> workingDateList = workingDateRepository.getByDateAndPermissionIsFalse(Utils.toBeginDate(new Date()));
@@ -45,6 +49,7 @@ public class SendLocationNotificationSchedule {
                 deviceTokenList.add(user.getDeviceToken());
             }
         }
+        pushMessage();
     }
 
     @Scheduled(cron = "0 0/15 8-12 * * 2-6")

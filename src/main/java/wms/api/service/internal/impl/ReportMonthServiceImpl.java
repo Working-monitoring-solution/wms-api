@@ -47,12 +47,11 @@ public class ReportMonthServiceImpl extends BaseServiceImpl<ReportMonthRepositor
         for (ReportMonth report : reportYear) {
             reportYearResponses.add(reportTransform.toReportResponse(report));
         }
-        UserReportResponse userReportResponse = UserReportResponse.builder()
+        return UserReportResponse.builder()
                 .reportMonth(reportTransform.toReportResponse(reportMonth))
                 .reportYear(reportYearResponses)
                 .build();
 
-        return userReportResponse;
     }
 
     @Override
