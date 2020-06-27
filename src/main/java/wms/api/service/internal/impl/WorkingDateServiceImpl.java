@@ -119,8 +119,13 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
                 DateFormat dateFormat = new SimpleDateFormat(Utils.ddMMyyyy);
                 row.createCell(0).setCellValue(dateFormat.format(workingDate.getDate()));
                 row.createCell(1).setCellValue(workingDate.getUser().getId());
-                row.createCell(2).setCellValue(workingDate.getCheckIn());
-                row.createCell(3).setCellValue(workingDate.getCheckOut());
+                if (workingDate.getCheckIn() != null) {
+
+                    row.createCell(2).setCellValue(workingDate.getCheckIn().toString());
+                }
+                if (workingDate.getCheckOut() != null) {
+                    row.createCell(3).setCellValue(workingDate.getCheckOut().toString());
+                }
                 row.createCell(4).setCellValue(workingDate.isPermission());
                 row.createCell(5).setCellValue(workingDate.isAt0800());
                 row.createCell(6).setCellValue(workingDate.isAt0815());
