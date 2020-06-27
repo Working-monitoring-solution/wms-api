@@ -56,6 +56,9 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         User user = tokenService.validateUserToken(token);
         Date date = Utils.toBeginDate(new Date());
         WorkingDate workingDate = repo.getWorkingDateByUserAndDateAndPermissionIsFalse(user, date);
+        if (ObjectUtils.isEmpty(workingDate)) {
+            throw new WMSException.NotFoundEntityException("working date");
+        }
         return updateWorkingDate(sendLocationRequest, workingDate);
     }
 
@@ -112,6 +115,12 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
                 cell.setCellStyle(style);
             }
 
+            CellStyle falseCellStyle = workbook.createCellStyle();
+            Font falseFont = workbook.createFont();
+            falseFont.setColor(IndexedColors.RED.index);
+            falseFont.setFontName("Times New Roman");
+            falseCellStyle.setFont(falseFont);
+
             // set data
             int rowIdx = 1;
             for (WorkingDate workingDate : workingDateList) {
@@ -119,43 +128,48 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
                 DateFormat dateFormat = new SimpleDateFormat(Utils.ddMMyyyy);
                 row.createCell(0).setCellValue(dateFormat.format(workingDate.getDate()));
                 row.createCell(1).setCellValue(workingDate.getUser().getId());
-                row.createCell(2).setCellValue(workingDate.getCheckIn());
-                row.createCell(3).setCellValue(workingDate.getCheckOut());
+                if (workingDate.getCheckIn() != null) {
+
+                    row.createCell(2).setCellValue(workingDate.getCheckIn().toString());
+                }
+                if (workingDate.getCheckOut() != null) {
+                    row.createCell(3).setCellValue(workingDate.getCheckOut().toString());
+                }
                 row.createCell(4).setCellValue(workingDate.isPermission());
-                row.createCell(5).setCellValue(workingDate.isAt0800());
-                row.createCell(6).setCellValue(workingDate.isAt0815());
-                row.createCell(7).setCellValue(workingDate.isAt0830());
-                row.createCell(8).setCellValue(workingDate.isAt0845());
-                row.createCell(9).setCellValue(workingDate.isAt0900());
-                row.createCell(10).setCellValue(workingDate.isAt0915());
-                row.createCell(11).setCellValue(workingDate.isAt0930());
-                row.createCell(12).setCellValue(workingDate.isAt0945());
-                row.createCell(13).setCellValue(workingDate.isAt1000());
-                row.createCell(14).setCellValue(workingDate.isAt1015());
-                row.createCell(15).setCellValue(workingDate.isAt1030());
-                row.createCell(16).setCellValue(workingDate.isAt1045());
-                row.createCell(17).setCellValue(workingDate.isAt1100());
-                row.createCell(18).setCellValue(workingDate.isAt1115());
-                row.createCell(19).setCellValue(workingDate.isAt1130());
-                row.createCell(20).setCellValue(workingDate.isAt1145());
-                row.createCell(21).setCellValue(workingDate.isAt1200());
-                row.createCell(22).setCellValue(workingDate.isAt1300());
-                row.createCell(23).setCellValue(workingDate.isAt1315());
-                row.createCell(24).setCellValue(workingDate.isAt1330());
-                row.createCell(25).setCellValue(workingDate.isAt1345());
-                row.createCell(26).setCellValue(workingDate.isAt1400());
-                row.createCell(27).setCellValue(workingDate.isAt1415());
-                row.createCell(28).setCellValue(workingDate.isAt1430());
-                row.createCell(29).setCellValue(workingDate.isAt1445());
-                row.createCell(30).setCellValue(workingDate.isAt1500());
-                row.createCell(31).setCellValue(workingDate.isAt1515());
-                row.createCell(32).setCellValue(workingDate.isAt1530());
-                row.createCell(33).setCellValue(workingDate.isAt1545());
-                row.createCell(34).setCellValue(workingDate.isAt1600());
-                row.createCell(35).setCellValue(workingDate.isAt1615());
-                row.createCell(36).setCellValue(workingDate.isAt1630());
-                row.createCell(37).setCellValue(workingDate.isAt1645());
-                row.createCell(38).setCellValue(workingDate.isAt1700());
+                updateCell(row, 5, falseCellStyle, workingDate.isAt0800());
+                updateCell(row, 6, falseCellStyle, workingDate.isAt0815());
+                updateCell(row, 7, falseCellStyle, workingDate.isAt0830());
+                updateCell(row, 8, falseCellStyle, workingDate.isAt0845());
+                updateCell(row, 9, falseCellStyle, workingDate.isAt0900());
+                updateCell(row, 10, falseCellStyle, workingDate.isAt0915());
+                updateCell(row, 11, falseCellStyle, workingDate.isAt0930());
+                updateCell(row, 12, falseCellStyle, workingDate.isAt0945());
+                updateCell(row, 13, falseCellStyle, workingDate.isAt1000());
+                updateCell(row, 14, falseCellStyle, workingDate.isAt1015());
+                updateCell(row, 15, falseCellStyle, workingDate.isAt1030());
+                updateCell(row, 16, falseCellStyle, workingDate.isAt1045());
+                updateCell(row, 17, falseCellStyle, workingDate.isAt1100());
+                updateCell(row, 18, falseCellStyle, workingDate.isAt1115());
+                updateCell(row, 19, falseCellStyle, workingDate.isAt1130());
+                updateCell(row, 20, falseCellStyle, workingDate.isAt1145());
+                updateCell(row, 21, falseCellStyle, workingDate.isAt1200());
+                updateCell(row, 22, falseCellStyle, workingDate.isAt1300());
+                updateCell(row, 23, falseCellStyle, workingDate.isAt1315());
+                updateCell(row, 24, falseCellStyle, workingDate.isAt1330());
+                updateCell(row, 25, falseCellStyle, workingDate.isAt1345());
+                updateCell(row, 26, falseCellStyle, workingDate.isAt1400());
+                updateCell(row, 27, falseCellStyle, workingDate.isAt1415());
+                updateCell(row, 28, falseCellStyle, workingDate.isAt1430());
+                updateCell(row, 29, falseCellStyle, workingDate.isAt1445());
+                updateCell(row, 30, falseCellStyle, workingDate.isAt1500());
+                updateCell(row, 31, falseCellStyle, workingDate.isAt1515());
+                updateCell(row, 32, falseCellStyle, workingDate.isAt1530());
+                updateCell(row, 33, falseCellStyle, workingDate.isAt1545());
+                updateCell(row, 34, falseCellStyle, workingDate.isAt1600());
+                updateCell(row, 35, falseCellStyle, workingDate.isAt1615());
+                updateCell(row, 36, falseCellStyle, workingDate.isAt1630());
+                updateCell(row, 37, falseCellStyle, workingDate.isAt1645());
+                updateCell(row, 38, falseCellStyle, workingDate.isAt1700());
             }
             sheet.autoSizeColumn(0);
             sheet.autoSizeColumn(2);
@@ -338,7 +352,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
     private WorkingDate update(int hour, int minute, boolean checkValue, WorkingDate workingDate) {
         if ((hour < 8) || (hour == 8 && minute < 9)) {
             workingDate.setAt0800(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             workingDate.setCheckOut(new Timestamp(new Date().getTime()));
@@ -346,7 +360,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 8 && minute > 12 && minute < 24) {
             workingDate.setAt0815(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt0800() && !checkValue) {
@@ -357,7 +371,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 8 && minute > 27 && minute < 39) {
             workingDate.setAt0830(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt0815() && !checkValue) {
@@ -368,7 +382,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 8 && minute > 42 && minute < 54) {
             workingDate.setAt0845(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt0830() && !checkValue) {
@@ -379,7 +393,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if ((hour == 8 && minute > 57) || (hour == 9 && minute < 9)) {
             workingDate.setAt0900(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt0845() && !checkValue) {
@@ -390,7 +404,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 9 && minute > 12 && minute < 24) {
             workingDate.setAt0915(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt0900() && !checkValue) {
@@ -401,7 +415,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 9 && minute > 27 && minute < 39) {
             workingDate.setAt0930(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt0915() && !checkValue) {
@@ -412,7 +426,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 9 && minute > 42 && minute < 54) {
             workingDate.setAt0945(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt0930() && !checkValue) {
@@ -423,7 +437,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if ((hour == 9 && minute > 57) || (hour == 10 && minute < 9)) {
             workingDate.setAt1000(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt0945() && !checkValue) {
@@ -434,7 +448,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 10 && minute > 12 && minute < 24) {
             workingDate.setAt1015(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1000() && !checkValue) {
@@ -445,7 +459,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 10 && minute > 27 && minute < 39) {
             workingDate.setAt1030(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1015() && !checkValue) {
@@ -456,7 +470,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 10 && minute > 42 && minute < 54) {
             workingDate.setAt1045(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1030() && !checkValue) {
@@ -467,7 +481,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if ((hour == 10 && minute > 57) || (hour == 11 && minute < 9)) {
             workingDate.setAt1100(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1045() && !checkValue) {
@@ -478,7 +492,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 11 && minute > 12 && minute < 24) {
             workingDate.setAt1115(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1100() && !checkValue) {
@@ -489,7 +503,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 11 && minute > 27 && minute < 39) {
             workingDate.setAt1130(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1115() && !checkValue) {
@@ -500,7 +514,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 11 && minute > 42 && minute < 54) {
             workingDate.setAt1145(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1130() && !checkValue) {
@@ -511,7 +525,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if ((hour == 11 && minute > 57) || (hour == 12 && minute < 9)) {
             workingDate.setAt1200(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1145() && !checkValue) {
@@ -522,7 +536,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if ((hour == 12 && minute > 57) || (hour == 13 && minute < 9)) {
             workingDate.setAt1300(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1200() && !checkValue) {
@@ -533,7 +547,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 13 && minute > 12 && minute < 24) {
             workingDate.setAt1315(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1300() && !checkValue) {
@@ -544,7 +558,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 13 && minute > 27 && minute < 39) {
             workingDate.setAt1330(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1315() && !checkValue) {
@@ -555,7 +569,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 13 && minute > 42 && minute < 54) {
             workingDate.setAt1345(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1330() && !checkValue) {
@@ -566,7 +580,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if ((hour == 13 && minute > 57) || (hour == 14 && minute < 9)) {
             workingDate.setAt1400(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1345() && !checkValue) {
@@ -577,7 +591,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 14 && minute > 12 && minute < 24) {
             workingDate.setAt1415(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1400() && !checkValue) {
@@ -588,7 +602,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 14 && minute > 27 && minute < 39) {
             workingDate.setAt1430(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1415() && !checkValue) {
@@ -599,7 +613,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 14 && minute > 42 && minute < 54) {
             workingDate.setAt1445(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1430() && !checkValue) {
@@ -610,7 +624,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if ((hour == 14 && minute > 57) || (hour == 15 && minute < 9)) {
             workingDate.setAt1500(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1445() && !checkValue) {
@@ -621,7 +635,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 15 && minute > 12 && minute < 24) {
             workingDate.setAt1515(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1500() && !checkValue) {
@@ -632,7 +646,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 15 && minute > 27 && minute < 39) {
             workingDate.setAt1530(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1515() && !checkValue) {
@@ -643,7 +657,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 15 && minute > 42 && minute < 54) {
             workingDate.setAt1545(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1530() && !checkValue) {
@@ -654,7 +668,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if ((hour == 15 && minute > 57) || (hour == 16 && minute < 9)) {
             workingDate.setAt1600(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1545() && !checkValue) {
@@ -665,7 +679,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 16 && minute > 12 && minute < 24) {
             workingDate.setAt1615(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1600() && !checkValue) {
@@ -676,7 +690,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 16 && minute > 27 && minute < 39) {
             workingDate.setAt1630(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1615() && !checkValue) {
@@ -687,7 +701,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if (hour == 16 && minute > 42 && minute < 54) {
             workingDate.setAt1645(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             if (workingDate.isAt1630() && !checkValue) {
@@ -698,7 +712,7 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         }
         if ((hour == 16 && minute > 57) || (hour == 17 && minute < 9)) {
             workingDate.setAt1700(checkValue);
-            if (ObjectUtils.isEmpty(workingDate.getCheckIn())) {
+            if (ObjectUtils.isEmpty(workingDate.getCheckIn()) && checkValue) {
                 workingDate.setCheckIn(new Timestamp(new Date().getTime()));
             }
             workingDate.setCheckOut(new Timestamp(new Date().getTime()));
@@ -707,6 +721,14 @@ public class WorkingDateServiceImpl extends BaseServiceImpl<WorkingDateRepositor
         return workingDate;
     }
 
-
+    private void updateCell(Row row, int cellIndex, CellStyle cellStyle, Boolean value) {
+        if (value) {
+            row.createCell(cellIndex).setCellValue("Onsite");
+        } else {
+            Cell cell = row.createCell(cellIndex);
+            cell.setCellValue("Offsite");
+            cell.setCellStyle(cellStyle);
+        }
+    }
 
 }
